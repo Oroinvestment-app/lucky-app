@@ -41,9 +41,9 @@
         .card-header { font-size: 16px; font-weight: 800; color: #fbbf24; text-align: center; margin-bottom: 6px; text-transform: uppercase; }
         .card-desc { font-size: 12px; color: #8b949e; text-align: center; margin-bottom: 14px; line-height: 1.4; }
 
-        /* Spin Design */
-        .spin-container { position: relative; width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 50%; border: 6px solid #fbbf24; background: radial-gradient(circle, #21262d, #0b0e14); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-        .spin-btn-center { width: 75px; height: 75px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #fbbf24); color: #fff; font-weight: 900; font-size: 16px; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        /* Spin Design with Medallion Logo Background */
+        .spin-container { position: relative; width: 220px; height: 220px; margin: 0 auto 16px; border-radius: 50%; border: 4px solid #fbbf24; background: url('https://i.ibb.co/L8y2w1S/awards-logo.png') no-repeat center center; background-size: cover; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(251, 191, 36, 0.4); }
+        .spin-btn-center { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #fbbf24); color: #fff; font-weight: 900; font-size: 16px; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.7); }
         
         .spin-rewards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
         .reward-badge { background: #0b0e14; border: 1px solid #30363d; padding: 6px; border-radius: 8px; text-align: center; font-size: 11px; color: #fbbf24; font-weight: 700; }
@@ -79,7 +79,7 @@
     <!-- Header Area -->
     <div class="top-bar">
         <div class="logo-box">
-            <img src="https://i.ibb.co/L8y2w1S/awards-logo.png" alt="AWARDS" class="app-logo" onerror="this.src='https://via.placeholder.com/45/f59e0b/ffffff?text=A'">
+            <img src="https://i.ibb.co/L8y2w1S/awards-logo.png" alt="AWARDS" class="app-logo">
             <div class="brand-name">AWARDS</div>
         </div>
         <div class="header-actions">
@@ -167,9 +167,7 @@
             <button class="btn-main" onclick="buyTicketPrompt(450, 3000)" style="margin-top: 12px;">Tikettii Bilbilaa Biti (450 Br)</button>
         </div>
 
-        <!-- CATEGORIZED TICKETS (TORBEE - JI'A 5) -->
-        
-        <!-- 1. Torbee 1 -->
+        <!-- CATEGORIZED TICKETS -->
         <div class="card">
             <div class="card-header">Carraa Torbee 1 (Turti: Guyyaa 7)</div>
             <div class="card-desc">
@@ -179,7 +177,6 @@
             <div class="ticket-list" id="tickets-w1"></div>
         </div>
 
-        <!-- 2. Torbee 2 (Guyyaa 15) -->
         <div class="card">
             <div class="card-header">Carraa Torbee 2 (Turti: Guyyaa 15)</div>
             <div class="card-desc">
@@ -189,7 +186,6 @@
             <div class="ticket-list" id="tickets-w2"></div>
         </div>
 
-        <!-- 3. Ji'a 1 -->
         <div class="card">
             <div class="card-header">Carraa Ji'a 1 (Turti: Guyyaa 30)</div>
             <div class="card-desc">
@@ -199,7 +195,6 @@
             <div class="ticket-list" id="tickets-m1"></div>
         </div>
 
-        <!-- 4. Ji'a 2 -->
         <div class="card">
             <div class="card-header">Carraa Ji'a 2 (Turti: Guyyaa 60)</div>
             <div class="card-desc">
@@ -209,7 +204,6 @@
             <div class="ticket-list" id="tickets-m2"></div>
         </div>
 
-        <!-- 5. Ji'a 5 -->
         <div class="card">
             <div class="card-header">Carraa Ji'a 5 (Turti: Guyyaa 150)</div>
             <div class="card-desc">
@@ -235,7 +229,7 @@
     <!-- PROFILE TAB -->
     <div class="container tab-content" id="tab-profile">
         <div class="card">
-            <div class="card-header"><i class="fa-solid fa-user-gear"></i> Profile Profile</div>
+            <div class="card-header"><i class="fa-solid fa-user-gear"></i> Profile</div>
             <div style="line-height: 2; font-size: 14px; margin-top: 10px;">
                 <div><strong>Maqaa:</strong> <span id="prof-name">Fayyadamaa</span></div>
                 <div><strong>Mobile:</strong> <span id="prof-phone">Not Set</span></div>
@@ -302,7 +296,6 @@
     </div>
 
     <script>
-        // Telegram Web App Auto User Capture
         const tg = window.Telegram.WebApp;
         tg.expand();
         
@@ -311,7 +304,6 @@
         let dailyBigWins = { win500: false, win1000: false };
         let myTickets = [];
 
-        // Dynamic User Setup
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const u = tg.initDataUnsafe.user;
             document.getElementById('prof-name').innerText = (u.first_name || '') + ' ' + (u.last_name || '');
@@ -323,7 +315,6 @@
             document.getElementById('prof-bal').innerText = userBalance.toFixed(2);
         }
 
-        // Navigation Switcher
         function switchTab(tab, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
@@ -334,7 +325,6 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Smart Logic Spin System
         function playSpin() {
             if (userBalance < 5) {
                 alert("Spin taphachuuf Haften Herrega keessanii gahaa miti! Maalo dursa Deposit godhaa (Balance > 5 Br ta'uu qaba).");
@@ -346,7 +336,6 @@
 
             let prize = 0;
 
-            // Strict Rules System
             if (spinCount === 2) {
                 prize = 15;
             } else if (spinCount === 3) {
@@ -356,7 +345,6 @@
             } else if (spinCount === 50) {
                 prize = 150;
             } else {
-                // High Wins strictly limited to 2 people max daily
                 let rand = Math.random();
                 if (rand < 0.001 && !dailyBigWins.win1000) {
                     prize = 1000;
@@ -374,11 +362,10 @@
             alert(`Baga gammaddan! Spin Naannessitanii ${prize} Br Mo'atttaniirtu. Balance keessan irratti ida'ameera!`);
         }
 
-        // Ticket Generation Logic
         function generateTickets(containerId, maxCount, price, durationText) {
             const container = document.getElementById(containerId);
             let html = '';
-            for (let i = 1; i <= Math.min(maxCount, 60); i++) { // Render preview limit for UI smoothness
+            for (let i = 1; i <= Math.min(maxCount, 60); i++) {
                 html += `<div class="ticket-item" id="${containerId}-${i}" onclick="buyTicket('${containerId}', ${i}, ${price}, '${durationText}')">${i}_Tiket ◼️</div>`;
             }
             container.innerHTML = html;
@@ -434,7 +421,6 @@
             box.innerHTML = h;
         }
 
-        // Submissions
         function submitDeposit() {
             const file = document.getElementById('depFile').files[0];
             if (!file) {
@@ -461,14 +447,12 @@
             closeModal('wdModal');
         }
 
-        // Initialize Ticket Lists
         generateTickets('tickets-w1', 800, 200, 'Torbee 1');
         generateTickets('tickets-w2', 1000, 200, 'Torbee 2');
         generateTickets('tickets-m1', 1000, 250, 'Ji\'a 1');
         generateTickets('tickets-m2', 1500, 300, 'Ji\'a 2');
         generateTickets('tickets-m5', 2000, 500, 'Ji\'a 5');
 
-        // Multi-language Translator
         function changeLang() {
             const lang = document.getElementById('langSelect').value;
             if (lang === 'am') {
