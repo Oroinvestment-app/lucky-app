@@ -3,227 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lucky Spin & Ticket App</title>
+  <title>AWARDS - Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --accent-color: #0088cc;
-      --gold-color: #ffd700;
-      --text-color: #ffffff;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #0b0f19; color: #f8fafc; padding-bottom: 80px; }
+    
+    /* Header & Balance */
+    .top-bar { background: #1e293b; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 18px; color: #f59e0b; }
+    .balance-box { background: #0f172a; padding: 6px 12px; border-radius: 20px; border: 1px solid #f59e0b; font-size: 13px; font-weight: bold; color: #10b981; }
+    .lang-select { background: #0f172a; color: #fff; border: 1px solid #334155; padding: 4px 8px; border-radius: 6px; font-size: 12px; }
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding-bottom: 70px;
-    }
+    /* Action Buttons (Deposit / Withdraw) */
+    .action-header { display: flex; gap: 10px; padding: 15px; }
+    .btn-action { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-dep { background: #10b981; color: #fff; }
+    .btn-with { background: #ef4444; color: #fff; }
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background-color: var(--card-bg);
-      border-bottom: 1px solid #333;
-    }
+    /* Main Container & Sections */
+    .container { padding: 0 15px; }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
 
-    .balance-box {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--gold-color);
-    }
+    .card { background: #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+    .card-title { font-size: 16px; font-weight: bold; color: #f59e0b; margin-bottom: 8px; }
 
-    .lang-select {
-      background: #2a2a2a;
-      color: white;
-      border: 1px solid #444;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
+    /* Phones Display */
+    .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .phone-card { background: #0f172a; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #334155; }
+    .phone-card.main { grid-column: span 2; }
+    .phone-img { width: 80px; height: 80px; object-fit: contain; margin: 5px 0; }
 
-    .hero {
-      text-align: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      border-radius: 0 0 15px 15px;
-    }
+    /* Grid Tickets */
+    .ticket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; max-height: 250px; overflow-y: auto; margin-top: 10px; padding: 5px; background: #0f172a; border-radius: 8px; }
+    .ticket-btn { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: center; }
+    .ticket-btn.booked { background: #334155; color: #ef4444; cursor: not-allowed; }
+    .ticket-btn.selected { background: #10b981; color: #fff; }
 
-    .nav-tabs {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background-color: var(--card-bg);
-      border-top: 1px solid #333;
-      padding: 10px 0;
-    }
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; }
+    .nav-btn { display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 11px; background: none; border: none; cursor: pointer; }
+    .nav-btn.active { color: #f59e0b; }
+    .nav-btn i { font-size: 18px; margin-bottom: 3px; }
 
-    .nav-btn {
-      background: none;
-      border: none;
-      color: #aaa;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    /* Spin Wheel UI */
+    .spin-box { text-align: center; padding: 20px 0; }
+    .wheel { width: 180px; height: 180px; border-radius: 50%; border: 8px solid #f59e0b; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #334155, #0f172a); font-weight: bold; font-size: 20px; color: #f59e0b; }
 
-    .nav-btn.active {
-      color: var(--accent-color);
-    }
-
-    .page-view {
-      display: none;
-      padding: 15px;
-    }
-
-    .page-view.active {
-      display: block;
-    }
-
-    .ticket-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 8px;
-      max-height: 250px;
-      overflow-y: auto;
-      margin-top: 10px;
-      padding: 5px;
-      background: #000;
-      border-radius: 8px;
-    }
-
-    .btn-action {
-      background-color: var(--accent-color);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-    }
+    /* Modal / Popups */
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
+    .modal-content { background: #1e293b; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; border: 1px solid #f59e0b; }
+    input, select { width: 100%; padding: 10px; margin: 8px 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 6px; }
+    .btn-submit { width: 100%; padding: 10px; background: #f59e0b; border: none; color: #000; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 5px; }
   </style>
 </head>
 <body>
 
-  <!-- Top Bar -->
   <div class="top-bar">
-    <div class="balance-box"><span id="lbl-balance">Qabeenya:</span> <span id="balance">0</span> ETB</div>
-    <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
-      <option value="om">Afaan Oromoo</option>
-      <option value="en">English</option>
+    <div class="brand"><i class="fa-solid fa-trophy"></i> AWARDS</div>
+    <div class="balance-box" id="user-balance">0.00 Br</div>
+    <select class="lang-select" id="langSel" onchange="changeLang(this.value)">
+      <option value="om">Oromoo</option>
       <option value="am">አማርኛ</option>
+      <option value="en">English</option>
     </select>
   </div>
 
-  <!-- Hero Section -->
-  <div class="hero">
-    <h2 id="txt-title">Carraa Kee Yaali!</h2>
-    <p id="txt-subtitle">Spin godhi ykn Tikkeettii bitachuun badhaasa mo'adhu.</p>
+  <div class="action-header">
+    <button class="btn-action btn-dep" onclick="openDepModal()"><i class="fa-solid fa-wallet"></i> Deposit</button>
+    <button class="btn-action btn-with" onclick="openWithModal()"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw</button>
   </div>
 
-  <!-- Pages -->
-  <div id="spin-page" class="page-view active">
-    <h3 id="txt-spin-header">Geengoo Carraa (Spin Wheel)</h3>
-    <p id="txt-spin-desc">Spin godhiitii badhaasa guyyaa keetii fudhadhu.</p>
-    <button class="btn-action" id="btn-spin" onclick="spinWheel()">Spin Godhi</button>
+  <div class="container">
+    
+    <div id="sec-home" class="tab-section active">
+      
+      <div class="card spin-box">
+        <div class="card-title" id="txt-spin-title">Geengoo Carraa (Daily Spin)</div>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;" id="txt-spin-desc">Si'a 1 Spin naannessuuf: 5 Br</p>
+        <div class="wheel" id="wheel-display">SPIN</div>
+        <button class="btn-submit" onclick="playSpin()" id="txt-spin-btn">Spin Taphadhu (5 Br)</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Carraa Bilbiloota Mobaayilaa</div>
+        <p style="font-size: 11px; color: #94a3b8;">Kaffaltii Tikettii: <b>450 Br</b> | Lakkoofsa: 1 - 3000</p>
+        
+        <div class="phone-grid">
+          <div class="phone-card main">
+            <b style="color: #f59e0b;">1ffaa: iPhone 17</b><br>
+            <img src="https://via.placeholder.com/100?text=iPhone+17" class="phone-img"><br>
+            <span style="font-size: 10px; color: #94a3b8;">Suura Fuulduraa fi Duubaa</span>
+          </div>
+          <div class="phone-card">
+            <b style="color: #cbd5e1;">2ffaa: iPhone 13</b><br>
+            <img src="https://via.placeholder.com/80?text=iPhone+13" class="phone-img">
+          </div>
+          <div class="phone-card">
+            <b style="color: #cd7f32;">3ffaa: Samsung A17</b><br>
+            <img src="https://via.placeholder.com/80?text=Samsung+A17" class="phone-img">
+          </div>
+        </div>
+
+        <div class="ticket-grid" id="grid-phone"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tikettii Carraa Torbee (1 Week)</div>
+        <p style="font-size: 11px; color: #94a3b8;">1ffaa: 50,000 Br | 2ffaa: 15,000 Br | 3ffaa: 5,000 Br</p>
+        <p style="font-size: 11px; color: #f59e0b;">Kaffaltii: 200 Br | Lakkoofsa: 1 - 800</p>
+        <div class="ticket-grid" id="grid-1w"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tikettii Carraa Torbee 2 (15 Days)</div>
+        <p style="font-size: 11px; color: #94a3b8;">1ffaa: 75,000 Br | 2ffaa: 30,000 Br | 3ffaa: 10,000 Br</p>
+        <p style="font-size: 11px; color: #f59e0b;">Kaffaltii: 200 Br | Lakkoofsa: 1 - 1000</p>
+        <div class="ticket-grid" id="grid-2w"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tikettii Carraa Ji'a 1 (1 Month)</div>
+        <p style="font-size: 11px; color: #94a3b8;">1ffaa: 100,000 Br | 2ffaa: 35,000 Br | 3ffaa: 15,000 Br</p>
+        <p style="font-size: 11px; color: #f59e0b;">Kaffaltii: 250 Br | Lakkoofsa: 1 - 1000</p>
+        <div class="ticket-grid" id="grid-1m"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tikettii Carraa Ji'a 2 (2 Months)</div>
+        <p style="font-size: 11px; color: #94a3b8;">1ffaa: 150,000 Br | 2ffaa: 50,000 Br | 3ffaa: 25,000 Br</p>
+        <p style="font-size: 11px; color: #f59e0b;">Kaffaltii: 300 Br | Lakkoofsa: 1 - 1500</p>
+        <div class="ticket-grid" id="grid-2m"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tikettii Carraa Ji'a 5 (5 Months)</div>
+        <p style="font-size: 11px; color: #94a3b8;">1ffaa: 250,000 Br | 2ffaa: 150,000 Br | 3ffaa: 50,000 Br</p>
+        <p style="font-size: 11px; color: #f59e0b;">Kaffaltii: 500 Br | Lakkoofsa: 1 - 2000</p>
+        <div class="ticket-grid" id="grid-5m"></div>
+      </div>
+
+    </div>
+
+    <div id="sec-tickets" class="tab-section">
+      <div class="card">
+        <div class="card-title">Tikettiwwan Koo</div>
+        <div id="my-ticket-list" style="font-size: 13px; color: #94a3b8;">Tikettiin bitatte asitti mul'ata...</div>
+      </div>
+    </div>
+
+    <div id="sec-profile" class="tab-section">
+      <div class="card">
+        <div class="card-title">Profile Fayyadamaa</div>
+        <p style="margin-top: 5px;">Maqaa: <b id="prof-name">...</b></p>
+        <p style="margin-top: 5px;">Lakk. Bilbilaa: <b id="prof-phone">Not Set</b></p>
+        <p style="margin-top: 5px;">Balance: <b id="prof-bal" style="color: #10b981;">0.00 Br</b></p>
+        <hr style="border-color: #334155; margin: 15px 0;">
+        <p style="font-size: 13px;">Official ADMIN: <a href="https://t.me/Ingkings" target="_blank" style="color: #f59e0b; text-decoration: none; font-weight: bold;">@Ingkings</a></p>
+      </div>
+    </div>
+
   </div>
 
-  <div id="tickets-page" class="page-view">
-    <h3 id="txt-ticket-header">Tikkeettii Bitadhu</h3>
-    <div class="ticket-grid" id="ticketContainer"></div>
-    <button class="btn-action" id="btn-buy-ticket" onclick="buyTicket()">Tikkeettii Biti</button>
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="switchNav('sec-home', this)"><i class="fa-solid fa-house"></i> Home</button>
+    <button class="nav-btn" onclick="switchNav('sec-tickets', this)"><i class="fa-solid fa-ticket"></i> My Tickets</button>
+    <button class="nav-btn" onclick="switchNav('sec-profile', this)"><i class="fa-solid fa-user"></i> Profile</button>
   </div>
 
-  <!-- Navigation Tabs -->
-  <div class="nav-tabs">
-    <button class="nav-btn active" id="nav-spin" onclick="showPage('spin-page', this)">Spin</button>
-    <button class="nav-btn" id="nav-tickets" onclick="showPage('tickets-page', this)">Tikkeettii</button>
+  <div class="modal" id="depModal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <b style="color: #10b981;">Deposit Maallaqaa</b>
+        <span onclick="closeModal('depModal')" style="cursor: pointer;">✖</span>
+      </div>
+      <div style="font-size: 12px; color: #cbd5e1; background: #0f172a; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+        <b>CBE BANK ACCOUNT:</b><br>
+        1000609844292 (GELETA ADEM)<br><br>
+        <b>TELEBIRR NUMBER:</b><br>
+        +251941470214 (GELETA ADEM)
+      </div>
+      <p style="font-size: 10px; color: #ef4444; margin-bottom: 5px;">⚠️ Kaffaltiin sobaa sa'aatii 5f akka dhoorkamtan godha!</p>
+      <input type="number" id="depAmount" placeholder="Hanga Maallaqaa (Min 10 Br)">
+      <p style="font-size: 11px; margin-top: 5px;">Suura Ragaa Kaffaltii (Receipt Screenshot):</p>
+      <input type="file" id="depFile" accept="image/*">
+      <button class="btn-submit" onclick="submitDeposit()">Ragaa Ergi (Upload)</button>
+    </div>
+  </div>
+
+  <div class="modal" id="withModal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <b style="color: #ef4444;">Withdrawal (Maallaqa Baasuu)</b>
+        <span onclick="closeModal('withModal')" style="cursor: pointer;">✖</span>
+      </div>
+      <select id="withBank">
+        <option value="CBE">CBE BANK</option>
+        <option value="Telebirr">TELEBIRR</option>
+      </select>
+      <input type="text" id="withAcc" placeholder="Lakk. Account / Telebirr">
+      <input type="number" id="withAmt" placeholder="Hanga Maallaqaa">
+      <p style="font-size: 10px; color: #10b981; margin: 5px 0;">⚡ Maallaqni daqiiqaa 15 keessatti siif ergaama.</p>
+      <button class="btn-submit" onclick="submitWithdraw()">Request Withdraw</button>
+    </div>
   </div>
 
   <script>
-    // Live Backend URL
-    const API_URL = "https://lucky-app-seven.vercel.app";
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-    // Translations Dictionary
-    const translations = {
-      om: {
-        balanceLabel: "Qabeenya:",
-        title: "Carraa Kee Yaali!",
-        subtitle: "Spin godhi ykn Tikkeettii bitachuun badhaasa mo'adhu.",
-        spinHeader: "Geengoo Carraa (Spin Wheel)",
-        spinDesc: "Spin godhiitii badhaasa guyyaa keetii fudhadhu.",
-        btnSpin: "Spin Godhi",
-        ticketHeader: "Tikkeettii Bitadhu",
-        btnBuyTicket: "Tikkeettii Biti",
-        navSpin: "Spin",
-        navTickets: "Tikkeettii"
-      },
-      en: {
-        balanceLabel: "Balance:",
-        title: "Try Your Luck!",
-        subtitle: "Spin or buy tickets to win prizes.",
-        spinHeader: "Spin Wheel",
-        spinDesc: "Spin the wheel to get your daily prize.",
-        btnSpin: "Spin Now",
-        ticketHeader: "Buy Tickets",
-        btnBuyTicket: "Buy Ticket",
-        navSpin: "Spin",
-        navTickets: "Tickets"
-      },
-      am: {
-        balanceLabel: "ቀሪ ሂሳብ:",
-        title: "ዕድልዎን ይሞክሩ!",
-        subtitle: "ስፒን ያድርጉ ወይም ቲኬት በመግዛት ያሸንፉ።",
-        spinHeader: "የዕድል መንኮራኩር",
-        spinDesc: "መንኮራኩሩን በማሽከርከር የዕለቱን ሽልማት ይውሰዱ።",
-        btnSpin: "ስፒን ያድርጉ",
-        ticketHeader: "ቲኬት ይግዙ",
-        btnBuyTicket: "ቲኬት ይግዙ",
-        navSpin: "ስፒን",
-        navTickets: "ቲኬቶች"
-      }
+    let userData = {
+      id: tg.initDataUnsafe?.user?.id || 12345,
+      name: tg.initDataUnsafe?.user?.first_name || "Guest User",
+      balance: 0,
+      spinCount: 0
     };
 
-    function changeLanguage(lang) {
-      const t = translations[lang];
-      document.getElementById('lbl-balance').innerText = t.balanceLabel;
-      document.getElementById('txt-title').innerText = t.title;
-      document.getElementById('txt-subtitle').innerText = t.subtitle;
-      document.getElementById('txt-spin-header').innerText = t.spinHeader;
-      document.getElementById('txt-spin-desc').innerText = t.spinDesc;
-      document.getElementById('btn-spin').innerText = t.btnSpin;
-      document.getElementById('txt-ticket-header').innerText = t.ticketHeader;
-      document.getElementById('btn-buy-ticket').innerText = t.btnBuyTicket;
-      document.getElementById('nav-spin').innerText = t.navSpin;
-      document.getElementById('nav-tickets').innerText = t.navTickets;
+    document.getElementById('prof-name').innerText = userData.name;
+
+    // Load Tickets on UI
+    function generateTickets(containerId, total, cost, category) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      for (let i = 1; i <= total; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'ticket-btn';
+        btn.innerHTML = `${i}_Tiket ◼️`;
+        btn.onclick = () => buyTicket(category, i, cost, btn);
+        container.appendChild(btn);
+      }
     }
 
-    function showPage(pageId, btn) {
-      document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+    // Initialize Lotteries
+    generateTickets('grid-phone', 3000, 450, 'Phone Lotty');
+    generateTickets('grid-1w', 800, 200, '1 Week');
+    generateTickets('grid-2w', 1000, 200, '2 Weeks');
+    generateTickets('grid-1m', 1000, 250, '1 Month');
+    generateTickets('grid-2m', 1500, 300, '2 Months');
+    generateTickets('grid-5m', 2000, 500, '5 Months');
+
+    function switchNav(secId, el) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
-      btn.classList.add('active');
+      document.getElementById(secId).classList.add('active');
+      el.classList.add('active');
     }
 
-    function spinWheel() {
-      fetch(`${API_URL}/api/spin`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => alert(data.message || "Spin Success!"))
-        .catch(err => console.error("Error connecting to backend", err));
+    function openDepModal() { document.getElementById('depModal').style.display = 'flex'; }
+    function openWithModal() { document.getElementById('withModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Spin Functionality
+    function playSpin() {
+      if (userData.balance < 5) {
+        alert("Maalo Spin taphachuuf balance keessan 5 Br ol ta'uu qaba! Dursa Deposit godhaa.");
+        return;
+      }
+
+      userData.balance -= 5;
+      userData.spinCount++;
+      
+      let winAmt = 0;
+      // Smart Spin Logic based on your rules
+      if (userData.spinCount === 2) winAmt = 15;
+      else if (userData.spinCount === 3) winAmt = 10;
+      else if (userData.spinCount === 20) winAmt = 50;
+      else if (userData.spinCount === 50) winAmt = 150;
+      else {
+        const rewards = [3, 5, 10, 15, 25];
+        winAmt = rewards[Math.floor(Math.random() * rewards.length)];
+      }
+
+      userData.balance += winAmt;
+      updateUI();
+      document.getElementById('wheel-display').innerText = winAmt + " Br";
+      alert(`Baga gammadde! Spin irratti ${winAmt} Br mo'atteera.`);
     }
 
-    function buyTicket() {
-      fetch(`${API_URL}/api/ticket`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => alert(data.message || "Ticket Purchased!"))
-        .catch(err => console.error("Error connecting to backend", err));
+    // Buy Ticket Logic
+    function buyTicket(category, num, cost, btnElement) {
+      if (btnElement.classList.contains('booked')) {
+        alert("Lakkoofsi tiket kun durse isin dura filatameera! Maaloo lakkoofsa biroo muradhaa.");
+        return;
+      }
+
+      if (userData.balance < cost) {
+        alert(`Maaloo Tiket murachuuf Haften Herrega keessanii gahaa miti! Tikettii kaniif ${cost} Br barbaachisa. Herrega guutuu deposit godhaa.`);
+        return;
+      }
+
+      userData.balance -= cost;
+      btnElement.classList.add('booked');
+      btnElement.innerHTML = `${num}_Tiket ✅`;
+      updateUI();
+
+      // Append to My Tickets
+      const myBox = document.getElementById('my-ticket-list');
+      if(myBox.innerText.includes("Tikettiin bitatte")) myBox.innerHTML = "";
+      myBox.innerHTML += `<div style="padding: 5px 0; border-bottom: 1px solid #334155;"><b>${category}</b> - Ticket #${num} (${cost} Br)</div>`;
+
+      alert(`Tiket #${num} (${category}) milkaa'inaan muratteera!`);
+    }
+
+    function submitDeposit() {
+      const amt = document.getElementById('depAmount').value;
+      const file = document.getElementById('depFile').files[0];
+
+      if (!amt || amt < 10) {
+        alert("Kaffaltiin 10 Br gad ta'e upload hin milkaa'u! Maaloo kaffaltii dhugaa raawwadhaa.");
+        return;
+      }
+      if (!file) {
+        alert("Maaloo suuraa ragaa kaffaltii (screenshot) upload godhaa!");
+        return;
+      }
+
+      closeModal('depModal');
+      alert("Ragaan kaffaltii keessani Admin’if ergameera. Daqiiqaa muraasa keessatti balance keessan irratti dabalama!");
+    }
+
+    function submitWithdraw() {
+      const amt = document.getElementById('withAmt').value;
+      if (amt > userData.balance || amt <= 0) {
+        alert("Balance gahaa hin qabdan!");
+        return;
+      }
+      userData.balance -= amt;
+      updateUI();
+      closeModal('withModal');
+      alert("Demandiin maallaqa baasuu ergameera. Daqiiqaa 15 keessatti akkuma isinii gahuun siif ajajama!");
+    }
+
+    function updateUI() {
+      document.getElementById('user-balance').innerText = userData.balance.toFixed(2) + " Br";
+      document.getElementById('prof-bal').innerText = userData.balance.toFixed(2) + " Br";
+    }
+
+    function changeLang(lang) {
+      if(lang === 'am') {
+        document.getElementById('txt-spin-title').innerText = "የዕድል መንኩራኩር (Daily Spin)";
+      } else if(lang === 'en') {
+        document.getElementById('txt-spin-title').innerText = "Daily Spin Wheel";
+      } else {
+        document.getElementById('txt-spin-title').innerText = "Geengoo Carraa (Daily Spin)";
+      }
     }
   </script>
 </body>
