@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWARDS Mini App - Complete System</title>
+  <title>AWARDS Mini App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
       --bg-color: #0b0d10;
@@ -29,15 +30,13 @@
       align-items: center;
     }
 
-    /* Top Bar */
     .header-bar {
       width: 100%;
       max-width: 420px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-      padding: 5px 0;
+      margin-bottom: 12px;
     }
 
     .logo-container {
@@ -47,19 +46,19 @@
     }
 
     .logo-badge {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       background: radial-gradient(circle, #ffe600 0%, #b8860b 100%);
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 0 12px var(--gold-glow);
-      font-size: 20px;
+      box-shadow: 0 0 10px var(--gold-glow);
+      font-size: 18px;
     }
 
     .logo-text {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       background: linear-gradient(180deg, #fff 30%, var(--gold) 100%);
       -webkit-background-clip: text;
@@ -69,73 +68,95 @@
     .top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .balance-badge {
       background: #16261c;
       border: 1px solid var(--green);
       color: var(--green);
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 8px;
       font-weight: bold;
-      font-size: 13px;
+      font-size: 12px;
     }
+
+    .btn-top {
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-dep { background: var(--green); color: #fff; }
+    .btn-with { background: var(--red); color: #fff; }
 
     .lang-select {
       background: #1a1d24;
       color: var(--gold);
       border: 1px solid var(--gold);
-      padding: 5px 8px;
+      padding: 4px 6px;
       border-radius: 8px;
       font-weight: bold;
+      font-size: 11px;
       cursor: pointer;
     }
 
-    /* Tab Layouts */
+    .banner {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(135deg, #2b1f07 0%, #14171f 100%);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+    }
+    .banner h3 { margin: 0; color: var(--gold); font-size: 12.5px; }
+    .banner p { margin: 4px 0 0 0; font-size: 10.5px; color: var(--text-sub); }
+
     .tab-content {
       width: 100%;
       max-width: 420px;
       display: none;
     }
-    .tab-content.active {
-      display: block;
-    }
+    .tab-content.active { display: block; }
 
-    /* Cards */
     .card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 15px;
+      padding: 14px;
+      margin-bottom: 14px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.4);
       border: 1px solid rgba(255, 200, 59, 0.15);
+      box-sizing: border-box;
     }
 
     .card-title {
       text-align: center;
       color: var(--gold);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
       text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .card-sub {
       text-align: center;
       color: var(--text-sub);
-      font-size: 11px;
-      margin-bottom: 12px;
+      font-size: 10.5px;
+      margin-bottom: 10px;
     }
 
-    /* Phone Podium */
     .podium {
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      gap: 8px;
-      height: 180px;
-      margin-bottom: 12px;
+      gap: 6px;
+      height: 185px;
+      margin-bottom: 10px;
     }
 
     .step {
@@ -146,10 +167,10 @@
     }
 
     .phone-img {
-      width: 50px;
-      height: 75px;
+      width: 60px;
+      height: 85px;
       object-fit: contain;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .rank-box {
@@ -159,45 +180,43 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6px 2px;
+      padding: 4px 2px;
       font-weight: bold;
     }
 
-    .rank-1 { height: 100px; background: linear-gradient(180deg, #d4af37, #574406); border: 1px solid var(--gold); }
-    .rank-2 { height: 75px; background: linear-gradient(180deg, #a0a0a0, #3a3a3a); }
-    .rank-3 { height: 55px; background: linear-gradient(180deg, #cd7f32, #4a2e12); }
+    .rank-1 { height: 95px; background: linear-gradient(180deg, #d4af37, #574406); border: 1px solid var(--gold); }
+    .rank-2 { height: 70px; background: linear-gradient(180deg, #a0a0a0, #3a3a3a); }
+    .rank-3 { height: 50px; background: linear-gradient(180deg, #cd7f32, #4a2e12); }
 
     .rank-title { font-size: 9px; text-align: center; color: #fff; margin-top: 2px; }
 
-    /* Main Action Button */
     .btn-main {
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       background: linear-gradient(90deg, #ff9900 0%, #ffc83b 100%);
       border: none;
       border-radius: 10px;
       color: #000;
       font-weight: bold;
-      font-size: 13px;
+      font-size: 12.5px;
       cursor: pointer;
     }
 
-    /* Ticket Grid Scroll */
     .ticket-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-      max-height: 140px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 160px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 2px;
     }
 
     .ticket-btn {
       background: var(--card-inner);
       border: 1px solid rgba(255, 200, 59, 0.3);
       color: #fff;
-      padding: 8px 4px;
+      padding: 7px 3px;
       border-radius: 6px;
       text-align: center;
       font-size: 10px;
@@ -205,12 +224,12 @@
       cursor: pointer;
     }
 
-    .ticket-btn.selected {
-      background: var(--gold);
-      color: #000;
+    .ticket-btn.taken {
+      background: #2a1515;
+      border-color: var(--red);
+      color: #888;
     }
 
-    /* Spin Wheel */
     .spin-container {
       position: relative;
       margin: 10px 0;
@@ -221,8 +240,8 @@
 
     #wheelCanvas {
       border-radius: 50%;
-      box-shadow: 0 0 20px rgba(255, 200, 59, 0.25);
-      border: 4px solid var(--gold);
+      box-shadow: 0 0 15px rgba(255, 200, 59, 0.25);
+      border: 3px solid var(--gold);
     }
 
     .spin-btn {
@@ -230,13 +249,14 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 55px;
-      height: 55px;
+      width: 50px;
+      height: 50px;
       background: radial-gradient(circle, #ffea68 0%, #ff9900 100%);
       border: 2px solid #fff;
       border-radius: 50%;
       color: #000;
       font-weight: 900;
+      font-size: 10px;
       cursor: pointer;
     }
 
@@ -247,41 +267,49 @@
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 20px solid var(--gold);
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 18px solid var(--gold);
       z-index: 10;
     }
 
-    /* Account / Forms */
-    .form-group {
-      margin-bottom: 12px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      color: var(--text-sub);
-      margin-bottom: 5px;
-    }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
     .form-control {
       width: 100%;
-      padding: 10px;
+      padding: 9px;
       border-radius: 8px;
       border: 1px solid #333;
       background: var(--card-inner);
       color: #fff;
       box-sizing: border-box;
+      font-size: 12px;
     }
-    .btn-green { background: var(--green); color: #fff; }
-    .btn-red { background: var(--red); color: #fff; }
 
-    /* Bottom Navigation Bar */
+    .modal {
+      display: none;
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      padding: 15px;
+      width: 100%;
+      max-width: 360px;
+    }
+
     .navbar {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
+      bottom: 0; left: 0; right: 0;
+      height: 55px;
       background: #11141c;
       border-top: 1px solid rgba(255,255,255,0.1);
       display: flex;
@@ -295,110 +323,108 @@
       flex-direction: column;
       align-items: center;
       color: var(--text-sub);
-      font-size: 10px;
+      font-size: 9.5px;
       cursor: pointer;
       background: none;
       border: none;
     }
 
-    .nav-item.active {
-      color: var(--gold);
-    }
-    .nav-icon { font-size: 18px; margin-bottom: 2px; }
+    .nav-item.active { color: var(--gold); }
+    .nav-icon { font-size: 16px; margin-bottom: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- Top Header Bar -->
+  <!-- Top Navigation Header -->
   <div class="header-bar">
     <div class="logo-container">
       <div class="logo-badge">🏆</div>
       <div class="logo-text">AWARDS</div>
     </div>
     <div class="top-actions">
+      <button class="btn-top btn-dep" id="btn-dep-text" onclick="openModal('deposit')">Deposit</button>
+      <button class="btn-top btn-with" id="btn-with-text" onclick="openModal('withdraw')">Withdraw</button>
       <div class="balance-badge" id="user-balance">0.00 Br</div>
       <select class="lang-select" onchange="changeLanguage(this.value)">
-        <option value="om">Oromoo</option>
+        <option value="om">Oromo</option>
         <option value="am">አማርኛ</option>
         <option value="en">English</option>
       </select>
     </div>
   </div>
 
-  <!-- TAB 1: HOME (Podium & All Ticket Duration Tiers) -->
+  <!-- Announcement Banner -->
+  <div class="banner">
+    <h3 id="lbl-banner-title">TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!</h3>
+    <p id="lbl-banner-sub">Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.</p>
+  </div>
+
+  <!-- TAB 1: HOME -->
   <div id="tab-home" class="tab-content active">
     
-    <!-- Phone Ticket -->
+    <!-- Phone Prizes Podium -->
     <div class="card">
-      <div class="card-title" id="t-phone-title">📱 CARRAA BILBILOOTA MOBAAYILAA</div>
-      <div class="card-sub" id="t-phone-sub">Kaffaltii: 450 Br | Lakkoofsa: 1 - 3000</div>
+      <div class="card-title" id="lbl-phone-title">📱 CARRAA BILBILOOTA MOBAAYILAA</div>
+      <div class="card-sub" id="lbl-phone-sub">Kaffaltii Tikettii: 450 Br | Lakkoofsa: 1 - 3000</div>
       
       <div class="podium">
         <div class="step">
-          <img class="phone-img" src="https://m.media-amazon.com/images/I/61g+8-gY34L._AC_SL1500_.jpg" alt="iPhone 13">
+          <span style="font-size:10px; font-weight:bold; color:#aaa;" id="lbl-rank2">2ffaa</span>
+          <img class="phone-img" src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300" alt="iPhone 13">
           <div class="rank-box rank-2">
-            <span id="t-rank2">2ffaa</span>
             <span class="rank-title">iPhone 13</span>
           </div>
         </div>
         <div class="step">
-          <span style="font-size:16px;">👑</span>
-          <img class="phone-img" src="https://m.media-amazon.com/images/I/81sigweoV1L._AC_SL1500_.jpg" alt="iPhone 17 Pro">
+          <span style="font-size:12px;" id="lbl-rank1">👑 1ffaa</span>
+          <img class="phone-img" src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300" alt="iPhone 17 Pro">
           <div class="rank-box rank-1">
-            <span id="t-rank1">1ffaa</span>
             <span class="rank-title">iPhone 17 Pro</span>
           </div>
         </div>
         <div class="step">
-          <img class="phone-img" src="https://m.media-amazon.com/images/I/71qG45fJJZL._AC_SL1500_.jpg" alt="Samsung A17">
+          <span style="font-size:10px; font-weight:bold; color:#cd7f32;" id="lbl-rank3">3ffaa</span>
+          <img class="phone-img" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300" alt="Samsung A17">
           <div class="rank-box rank-3">
-            <span id="t-rank3">3ffaa</span>
             <span class="rank-title">Samsung A17</span>
           </div>
         </div>
       </div>
-      <button class="btn-main" onclick="buyTicket('Bilbila', 450)" id="t-btn-phone">Tikettii Bilbilaa Biti (450 Br)</button>
+      <button class="btn-main" onclick="buyPhoneTicket()" id="lbl-buy-phone">Tikettii Bilbilaa Biti (450 Br)</button>
     </div>
 
-    <!-- Tier 1: Guyyaa (Daily) -->
+    <!-- Tier: Torbee 1 -->
     <div class="card">
-      <div class="card-title">☀️ CARRAA GUYYAA (TURTI: GUYYAA 1)</div>
-      <div class="card-sub">Kaffaltii: 50 Br | Filannoo: 1 - 100 | Badhaasa: 5,000 Br</div>
-      <div class="ticket-grid" id="grid-daily"></div>
-    </div>
-
-    <!-- Tier 2: Torbee 1 -->
-    <div class="card">
-      <div class="card-title">🗓️ CARRAA TORBEE 1 (TURTI: GUYYAA 7)</div>
-      <div class="card-sub">Kaffaltii: 200 Br | Filannoo: 1 - 800 | 1ffaa: 50,000 Br</div>
+      <div class="card-title" id="lbl-w1-title">🗓️ CARRAA TORBEE 1 (TURTI: GUYYAA 7)</div>
+      <div class="card-sub" id="lbl-w1-sub">Kaffaltii: 200 Br | Filannoo: 1-800 | 1ffaa: 50,000 Br</div>
       <div class="ticket-grid" id="grid-week1"></div>
     </div>
 
-    <!-- Tier 3: Torbee 2 -->
+    <!-- Tier: Torbee 2 -->
     <div class="card">
-      <div class="card-title">🗓️ CARRAA TORBEE 2 (TURTI: GUYYAA 14)</div>
-      <div class="card-sub">Kaffaltii: 350 Br | Filannoo: 1 - 1500 | 1ffaa: 100,000 Br</div>
+      <div class="card-title" id="lbl-w2-title">🗓️ CARRAA TORBEE 2 (TURTI: GUYYAA 15)</div>
+      <div class="card-sub" id="lbl-w2-sub">Kaffaltii: 200 Br | Filannoo: 1-1000 | 1ffaa: 75,000 Br</div>
       <div class="ticket-grid" id="grid-week2"></div>
     </div>
 
-    <!-- Tier 4: Ji'a 1 -->
+    <!-- Tier: Ji'a 1 -->
     <div class="card">
-      <div class="card-title">📅 CARRAA JI'A 1 (TURTI: GUYYAA 30)</div>
-      <div class="card-sub">Kaffaltii: 500 Br | Filannoo: 1 - 3000 | 1ffaa: 250,000 Br</div>
+      <div class="card-title" id="lbl-m1-title">📅 CARRAA JI'A 1 (TURTI: GUYYAA 30)</div>
+      <div class="card-sub" id="lbl-m1-sub">Kaffaltii: 250 Br | Filannoo: 1-1000 | 1ffaa: 100,000 Br</div>
       <div class="ticket-grid" id="grid-month1"></div>
     </div>
 
-    <!-- Tier 5: Ji'a 2 -->
+    <!-- Tier: Ji'a 2 -->
     <div class="card">
-      <div class="card-title">📅 CARRAA JI'A 2 (TURTI: GUYYAA 60)</div>
-      <div class="card-sub">Kaffaltii: 850 Br | Filannoo: 1 - 5000 | 1ffaa: 500,000 Br</div>
+      <div class="card-title" id="lbl-m2-title">📅 CARRAA JI'A 2 (TURTI: GUYYAA 60)</div>
+      <div class="card-sub" id="lbl-m2-sub">Kaffaltii: 300 Br | Filannoo: 1-1500 | 1ffaa: 150,000 Br</div>
       <div class="ticket-grid" id="grid-month2"></div>
     </div>
 
-    <!-- Tier 6: Ji'a 5 -->
+    <!-- Tier: Ji'a 5 -->
     <div class="card">
-      <div class="card-title">🏆 CARRAA JI'A 5 (TURTI: GUYYAA 150)</div>
-      <div class="card-sub">Kaffaltii: 1500 Br | Filannoo: 1 - 10000 | 1ffaa: 1,500,000 Br</div>
+      <div class="card-title" id="lbl-m5-title">🏆 CARRAA JI'A 5 (TURTI: GUYYAA 150)</div>
+      <div class="card-sub" id="lbl-m5-sub">Kaffaltii: 500 Br | Filannoo: 1-2000 | 1ffaa: 250,000 Br</div>
       <div class="ticket-grid" id="grid-month5"></div>
     </div>
 
@@ -407,66 +433,92 @@
   <!-- TAB 2: SPIN WHEEL -->
   <div id="tab-spin" class="tab-content">
     <div class="card" style="text-align: center;">
-      <div class="card-title" id="t-spin-title">⚙️ CARRAA GUYYAA (SPIN)</div>
-      <div class="card-sub" id="t-spin-sub">Si'a 1 Spin naannessuuf kaffaltiini: 5 Br</div>
+      <div class="card-title" id="lbl-spin-title">⚙️ CARRAA GUYYAA (SPIN)</div>
+      <div class="card-sub" id="lbl-spin-sub">Si'a 1 Spin naannessuuf kaffaltiini: 5 Br</div>
       
       <div class="spin-container">
         <div class="pointer"></div>
-        <canvas id="wheelCanvas" width="270" height="270"></canvas>
-        <button class="spin-btn" id="t-btn-spin" onclick="spin()">SPIN</button>
+        <canvas id="wheelCanvas" width="260" height="260"></canvas>
+        <button class="spin-btn" id="lbl-spin-btn" onclick="spin()">SPIN</button>
       </div>
+      <p style="font-size:11px; color:var(--text-sub); margin-top:10px;" id="lbl-spin-prizes">Badhaasota Spin: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br</p>
     </div>
   </div>
 
-  <!-- TAB 3: MY TICKETS (Iddoo Tikkeettii) -->
+  <!-- TAB 3: MY TICKETS -->
   <div id="tab-tickets" class="tab-content">
     <div class="card">
-      <div class="card-title" id="t-mytickets-title">🎟️ TIKKEETTIIWWAN KOO</div>
-      <div class="card-sub">Tikkeettiiwwan bittan fi haala carraa isaanii</div>
+      <div class="card-title" id="lbl-mytickets-title">🎟️ TIKKEETTIIWWAN KOO</div>
+      <div class="card-sub" id="lbl-mytickets-sub">Lakkoofsa tikkeettii bittan fi sa'aatii turtiisaa</div>
       <div id="my-tickets-list">
-        <p style="text-align:center; font-size:12px; color:var(--text-sub);">Ammaaf tikkeettiin bittan hin jiru.</p>
+        <p style="text-align:center; font-size:12px; color:var(--text-sub);" id="lbl-no-tickets">Ammaaf tikkeettiin bittan hin jiru.</p>
       </div>
     </div>
   </div>
 
-  <!-- TAB 4: ACCOUNT & ADMIN PANEL -->
-  <div id="tab-admin" class="tab-content">
-    <!-- Account Settings -->
+  <!-- TAB 4: PROFILE & ADMIN -->
+  <div id="tab-profile" class="tab-content">
     <div class="card">
-      <div class="card-title">👤 AKSANNTII FAYYADAMAA</div>
-      <div class="form-group">
-        <label>Lakkoofsa Bilbilaa</label>
-        <input type="tel" class="form-control" id="user-phone" placeholder="09... Lakkoofsa keessan galchaa">
+      <div class="card-title" id="lbl-profile-title">👤 PROFILE FAYYADAMAA</div>
+      <div style="font-size:12px; line-height:1.8; margin-bottom:10px;">
+        <div><b id="lbl-tg-name-title">Maqaa Telegram:</b> <span id="tg-username">Loading...</span></div>
+        <div><b id="lbl-balance-title">Baalansii:</b> <span id="profile-balance" style="color:var(--green); font-weight:bold;">0.00 Br</span></div>
       </div>
-      <button class="btn-main" onclick="saveProfile()">Profile Olkaayi</button>
+      <div class="form-group">
+        <label id="lbl-phone-input">Lakkoofsa Bilbilaa Galchaa</label>
+        <input type="tel" class="form-control" id="user-phone" placeholder="09...">
+      </div>
+      <button class="btn-main" onclick="alert('Profile Saved!')" id="lbl-save-profile">Save Profile</button>
     </div>
 
-    <!-- Deposit & Withdrawal -->
-    <div class="card">
-      <div class="card-title">💳 KAFFALTII FI BAASII (WALLET)</div>
-      <div class="form-group">
-        <label>Hanga Maallaqaa (Br)</label>
-        <input type="number" class="form-control" id="amount-input" placeholder="Fakkeenyaaf: 500">
-      </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn-main btn-green" onclick="processMoney('deposit')">Deposit (Galchuu)</button>
-        <button class="btn-main btn-red" onclick="processMoney('withdraw')">Withdraw (Baasuu)</button>
-      </div>
-    </div>
-
-    <!-- Admin Management Panel -->
-    <div class="card" style="border-color: var(--red);">
-      <div class="card-title" style="color:var(--red);">⚙️ ADMIN PANEL (TO'ANNOO)</div>
-      <div class="card-sub">Badhaasota fi Mo'attota to'achuu</div>
-      <div class="form-group">
-        <label>Lakkoofsa Tikkeettii Mo'ataa Doorroosamaa</label>
-        <input type="text" class="form-control" placeholder="Fkn: Ticket #45 (Torbee 1)">
-      </div>
-      <button class="btn-main" style="background:var(--red); color:#fff;" onclick="alert('Mo\'ataan Mirkanaa\'eera!')">Mo'ataa Labsi (Announce Winner)</button>
+    <div class="card" style="text-align: center; border-color: var(--gold);">
+      <div class="card-title" id="lbl-admin-title">💬 OFFICIAL ADMIN</div>
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:8px;" id="lbl-admin-sub">Gargaarsa fi Gaaffiidhaaf Admin qunnamaa:</p>
+      <a href="https://t.me/Ingkings" target="_blank" style="color:var(--gold); font-size:16px; font-weight:bold; text-decoration:none;">👇👇👇👇<br>@Ingkings</a>
     </div>
   </div>
 
-  <!-- Bottom Navigation -->
+  <!-- Payment Modal (Deposit/Withdraw) -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-content">
+      <div class="card-title" id="modal-title">DEPOSIT PAYMENT</div>
+      
+      <div id="deposit-sec">
+        <div style="background:#111; padding:10px; border-radius:8px; font-size:11px; margin-bottom:10px;">
+          <p style="margin:2px 0; color:var(--gold);"><b>CBE BANK ACCOUNT:</b> 1000609844292</p>
+          <p style="margin:2px 0;"><b>NAME:</b> GELETA ADEM</p>
+          <hr style="border-color:#333;">
+          <p style="margin:2px 0; color:var(--green);"><b>TELEBIRR NUMBER:</b> +251941470214</p>
+          <p style="margin:2px 0;"><b>NAME:</b> GELETA ADEM</p>
+        </div>
+
+        <p style="font-size:10px; color:var(--red); margin-bottom:8px;" id="lbl-dep-warn">⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f ni uggura! Kaffaltiin 10 Br gadii hin danda'amu.</p>
+
+        <div class="form-group">
+          <label id="lbl-receipt-upload">Suuraa Ragaa Kaffaltii (Receipt Screenshot)</label>
+          <input type="file" class="form-control" id="receipt-file" accept="image/*">
+        </div>
+        <button class="btn-main" onclick="submitDeposit()" id="lbl-sub-receipt">Submit Receipt</button>
+      </div>
+
+      <div id="withdraw-sec" style="display:none;">
+        <p style="font-size:11px; color:var(--text-sub);" id="lbl-with-info">CBE BANK fi TELEBIRR qofan maallaqni daqiiqaa 15 keessatti isiniif ergama.</p>
+        <div class="form-group">
+          <label id="lbl-with-amt">Hanga Maallaqaa (Br)</label>
+          <input type="number" class="form-control" id="withdraw-amount" placeholder="Br">
+        </div>
+        <div class="form-group">
+          <label id="lbl-with-acc">Bakka Itti Ergamu (CBE Account / Telebirr Number)</label>
+          <input type="text" class="form-control" id="withdraw-account">
+        </div>
+        <button class="btn-main" style="background:var(--red); color:#fff;" onclick="submitWithdraw()" id="lbl-sub-with">Withdraw Request</button>
+      </div>
+
+      <button class="btn-main" style="background:#444; color:#fff; margin-top:8px;" onclick="closeModal()" id="lbl-close-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
   <div class="navbar">
     <button class="nav-item active" onclick="switchTab('home', this)">
       <span class="nav-icon">🏠</span>
@@ -478,167 +530,348 @@
     </button>
     <button class="nav-item" onclick="switchTab('tickets', this)">
       <span class="nav-icon">🎟️</span>
-      <span id="nav-tickets">Tikkeettii Koo</span>
+      <span id="nav-tickets">My Tickets</span>
     </button>
-    <button class="nav-item" onclick="switchTab('admin', this)">
+    <button class="nav-item" onclick="switchTab('profile', this)">
       <span class="nav-icon">👤</span>
-      <span id="nav-admin">Account & Admin</span>
+      <span id="nav-profile">Profile/Admin</span>
     </button>
   </div>
 
   <script>
-    // State Variables
-    let balance = 0;
-    let myTickets = [];
+    let balance = 0.00;
+    let spinCount = 0;
+    let takenTickets = {};
+    let userTickets = [];
     let currentLang = 'om';
+    let isBanned = false;
 
-    // Translations Object
+    // Telegram API Init
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand();
+      const user = tg.initDataUnsafe?.user;
+      document.getElementById('tg-username').innerText = user ? (user.first_name + ' ' + (user.last_name || '')) : "Telegram User";
+    } else {
+      document.getElementById('tg-username').innerText = "Guest User";
+    }
+
+    // Complete Language Database
     const translations = {
       om: {
-        rank1: "1ffaa", rank2: "2ffaa", rank3: "3ffaa",
-        btnPhone: "Tikettii Bilbilaa Biti (450 Br)",
+        dep: "Deposit", with: "Withdraw",
+        bannerTitle: "TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!",
+        bannerSub: "Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.",
+        phoneTitle: "📱 CARRAA BILBILOOTA MOBAAYILAA",
+        phoneSub: "Kaffaltii Tikettii: 450 Br | Lakkoofsa: 1 - 3000",
+        buyPhone: "Tikettii Bilbilaa Biti (450 Br)",
+        r1: "👑 1ffaa", r2: "2ffaa", r3: "3ffaa",
+        w1Title: "🗓️ CARRAA TORBEE 1 (TURTI: GUYYAA 7)",
+        w1Sub: "Kaffaltii: 200 Br | Filannoo: 1-800 | 1ffaa: 50,000 Br",
+        w2Title: "🗓️ CARRAA TORBEE 2 (TURTI: GUYYAA 15)",
+        w2Sub: "Kaffaltii: 200 Br | Filannoo: 1-1000 | 1ffaa: 75,000 Br",
+        m1Title: "📅 CARRAA JI'A 1 (TURTI: GUYYAA 30)",
+        m1Sub: "Kaffaltii: 250 Br | Filannoo: 1-1000 | 1ffaa: 100,000 Br",
+        m2Title: "📅 CARRAA JI'A 2 (TURTI: GUYYAA 60)",
+        m2Sub: "Kaffaltii: 300 Br | Filannoo: 1-1500 | 1ffaa: 150,000 Br",
+        m5Title: "🏆 CARRAA JI'A 5 (TURTI: GUYYAA 150)",
+        m5Sub: "Kaffaltii: 500 Br | Filannoo: 1-2000 | 1ffaa: 250,000 Br",
         spinTitle: "⚙️ CARRAA GUYYAA (SPIN)",
         spinSub: "Si'a 1 Spin naannessuuf kaffaltiini: 5 Br",
-        spinBtn: "SPIN",
+        spinPrizes: "Badhaasota Spin: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTicketsTitle: "🎟️ TIKKEETTIIWWAN KOO",
-        navHome: "Home", navSpin: "Spin", navTickets: "Tikkeettii Koo", navAdmin: "Account/Admin"
+        myTicketsSub: "Lakkoofsa tikkeettii bittan fi sa'aatii turtiisaa",
+        noTickets: "Ammaaf tikkeettiin bittan hin jiru.",
+        profileTitle: "👤 PROFILE FAYYADAMAA",
+        tgNameTitle: "Maqaa Telegram:", balanceTitle: "Baalansii:",
+        phoneInput: "Lakkoofsa Bilbilaa Galchaa", saveProfile: "Save Profile",
+        adminTitle: "💬 OFFICIAL ADMIN", adminSub: "Gargaarsa fi Gaaffiidhaaf Admin qunnamaa:",
+        depWarn: "⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f ni uggura! Kaffaltiin 10 Br gadii hin danda'amu.",
+        receiptUpload: "Suuraa Ragaa Kaffaltii (Receipt Screenshot)", subReceipt: "Submit Receipt",
+        withInfo: "CBE BANK fi TELEBIRR qofan maallaqni daqiiqaa 15 keessatti isiniif ergama.",
+        withAmt: "Hanga Maallaqaa (Br)", withAcc: "Bakka Itti Ergamu (CBE Account / Telebirr Number)",
+        subWith: "Withdraw Request", closeModal: "Close",
+        navHome: "Home", navSpin: "Spin", navTickets: "Tikkeettii Koo", navProfile: "Profile/Admin"
       },
       am: {
-        rank1: "1ኛ", rank2: "2ኛ", rank3: "3ኛ",
-        btnPhone: "የስልክ ቲኬት ይግዙ (450 Br)",
+        dep: "ገንዘብ አስገባ", with: "ገንዘብ አውጣ",
+        bannerTitle: "የዕድል መንኩራኩር በማሽከርከር አሁኑኑ ያሸንፉ!",
+        bannerSub: "እንኳን ወደ AWARDS Mini App በደህና መጡ። የቲኬት ዕድሎችን በመቁረጥ ታላላቅ ሽልማቶችን ያሸንፉ።",
+        phoneTitle: "📱 የስልክ ዕድል ሽልማት",
+        phoneSub: "የቲኬት ክፍያ: 450 Br | የቲኬት ቁጥር: 1 - 3000",
+        buyPhone: "የስልክ ቲኬት ይግዙ (450 Br)",
+        r1: "👑 1ኛ", r2: "2ኛ", r3: "3ኛ",
+        w1Title: "🗓️ የ1 ሳምንት ዕድል (ቆይታ: 7 ቀን)",
+        w1Sub: "ክፍያ: 200 Br | ምርጫ: 1-800 | 1ኛ: 50,000 Br",
+        w2Title: "🗓️ የ2 ሳምንት ዕድል (ቆይታ: 15 ቀን)",
+        w2Sub: "ክፍያ: 200 Br | ምርጫ: 1-1000 | 1ኛ: 75,000 Br",
+        m1Title: "📅 የ1 ወር ዕድል (ቆይታ: 30 ቀን)",
+        m1Sub: "ክፍያ: 250 Br | ምርጫ: 1-1000 | 1ኛ: 100,000 Br",
+        m2Title: "📅 የ2 ወር ዕድል (ቆይታ: 60 ቀን)",
+        m2Sub: "ክፍያ: 300 Br | ምርጫ: 1-1500 | 1ኛ: 150,000 Br",
+        m5Title: "🏆 የ5 ወር ዕድል (ቆይታ: 150 ቀን)",
+        m5Sub: "ክፍያ: 500 Br | ምርጫ: 1-2000 | 1ኛ: 250,000 Br",
         spinTitle: "⚙️ የዕለቱ ዕድል (ስፒን)",
         spinSub: "ለ1 ስፒን ማሽከርከሪያ ክፍያ: 5 Br",
-        spinBtn: "አሽክርክር",
+        spinPrizes: "የስፒን ሽልማቶች: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTicketsTitle: "🎟️ የእኔ ቲኬቶች",
-        navHome: "ዋና ገጽ", navSpin: "ስፒን", navTickets: "የእኔ ቲኬቶች", navAdmin: "አካውንት/አድሚን"
+        myTicketsSub: "የገዟቸው ቲኬቶች እና የሚያበቁበት ቀን",
+        noTickets: "እስካሁን የገዙት ቲኬት የለም።",
+        profileTitle: "👤 የተጠቃሚ ፕሮፋይል",
+        tgNameTitle: "የቴሌግራም ስም:", balanceTitle: "ቀሪ ሂሳብ:",
+        phoneInput: "የስልክ ቁጥር ያስገቡ", saveProfile: "ፕሮፋይል አስቀምጥ",
+        adminTitle: "💬 ኦፊሴላዊ አድሚን", adminSub: "ለእርዳታ እና ለጥያቄ አድሚኑን ያናግሩ:",
+        depWarn: "⚠️ ማስታወቂያ: የሐሰት ደረሰኝ መላክ መለያዎን ለ5 ሰዓታት ያግደዋል! ከ10 ብር በታች ማስገባት አይቻልም።",
+        receiptUpload: "የክፍያ ደረሰኝ ፎቶ (Receipt Screenshot)", subReceipt: "ደረሰኝ ላክ",
+        withInfo: "በንግድ ባንክ እና በቴሌብር ብቻ ገንዘብ በ15 ደቂቃ ውስጥ ይላክሎታል።",
+        withAmt: "የገንዘብ መጠን (Br)", withAcc: "የሚላክበት (የባንክ ሂሳብ / ቴሌብር ቁጥር)",
+        subWith: "ገንዘብ ለማውጣት ጠይቅ", closeModal: "ዝጋ",
+        navHome: "ዋና ገጽ", navSpin: "ስፒን", navTickets: "የእኔ ቲኬቶች", navProfile: "ፕሮፋይል/አድሚን"
       },
       en: {
-        rank1: "1st", rank2: "2nd", rank3: "3rd",
-        btnPhone: "Buy Phone Ticket (450 Br)",
+        dep: "Deposit", with: "Withdraw",
+        bannerTitle: "PLAY SPIN AND WIN BIG PRIZES NOW!",
+        bannerSub: "Welcome to AWARDS Mini App. Buy tickets and win huge lucky draw prizes.",
+        phoneTitle: "📱 MOBILE PHONE PRIZES",
+        phoneSub: "Ticket Price: 450 Br | Numbers: 1 - 3000",
+        buyPhone: "Buy Phone Ticket (450 Br)",
+        r1: "👑 1st", r2: "2nd", r3: "3rd",
+        w1Title: "🗓️ WEEK 1 DRAW (DURATION: 7 DAYS)",
+        w1Sub: "Fee: 200 Br | Select: 1-800 | 1st: 50,000 Br",
+        w2Title: "🗓️ WEEK 2 DRAW (DURATION: 15 DAYS)",
+        w2Sub: "Fee: 200 Br | Select: 1-1000 | 1st: 75,000 Br",
+        m1Title: "📅 MONTH 1 DRAW (DURATION: 30 DAYS)",
+        m1Sub: "Fee: 250 Br | Select: 1-1000 | 1st: 100,000 Br",
+        m2Title: "📅 MONTH 2 DRAW (DURATION: 60 DAYS)",
+        m2Sub: "Fee: 300 Br | Select: 1-1500 | 1st: 150,000 Br",
+        m5Title: "🏆 MONTH 5 DRAW (DURATION: 150 DAYS)",
+        m5Sub: "Fee: 500 Br | Select: 1-2000 | 1st: 250,000 Br",
         spinTitle: "⚙️ DAILY LUCKY SPIN",
         spinSub: "Fee per 1 Spin: 5 Br",
-        spinBtn: "SPIN",
+        spinPrizes: "Spin Rewards: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTicketsTitle: "🎟️ MY TICKETS",
-        navHome: "Home", navSpin: "Spin", navTickets: "My Tickets", navAdmin: "Account/Admin"
+        myTicketsSub: "Your active lucky draw tickets & expiration date",
+        noTickets: "You have no purchased tickets yet.",
+        profileTitle: "👤 USER PROFILE",
+        tgNameTitle: "Telegram Name:", balanceTitle: "Balance:",
+        phoneInput: "Enter Phone Number", saveProfile: "Save Profile",
+        adminTitle: "💬 OFFICIAL ADMIN", adminSub: "Contact Admin for help & support:",
+        depWarn: "⚠️ Notice: Uploading fake payment screenshots will ban your account for 5 hours! Minimum deposit is 10 Br.",
+        receiptUpload: "Upload Payment Receipt Screenshot", subReceipt: "Submit Receipt",
+        withInfo: "Withdrawals to CBE Bank & Telebirr are processed within 15 minutes.",
+        withAmt: "Amount (Br)", withAcc: "Receiving Account (CBE / Telebirr Number)",
+        subWith: "Submit Withdrawal", closeModal: "Close",
+        navHome: "Home", navSpin: "Spin", navTickets: "My Tickets", navProfile: "Profile/Admin"
       }
     };
 
     function changeLanguage(lang) {
       currentLang = lang;
       const t = translations[lang];
-      document.getElementById('t-rank1').innerText = t.rank1;
-      document.getElementById('t-rank2').innerText = t.rank2;
-      document.getElementById('t-rank3').innerText = t.rank3;
-      document.getElementById('t-btn-phone').innerText = t.btnPhone;
-      document.getElementById('t-spin-title').innerText = t.spinTitle;
-      document.getElementById('t-spin-sub').innerText = t.spinSub;
-      document.getElementById('t-btn-spin').innerText = t.spinBtn;
-      document.getElementById('t-mytickets-title').innerText = t.myTicketsTitle;
+
+      document.getElementById('btn-dep-text').innerText = t.dep;
+      document.getElementById('btn-with-text').innerText = t.with;
+      document.getElementById('lbl-banner-title').innerText = t.bannerTitle;
+      document.getElementById('lbl-banner-sub').innerText = t.bannerSub;
+
+      document.getElementById('lbl-phone-title').innerText = t.phoneTitle;
+      document.getElementById('lbl-phone-sub').innerText = t.phoneSub;
+      document.getElementById('lbl-buy-phone').innerText = t.buyPhone;
+      document.getElementById('lbl-rank1').innerText = t.r1;
+      document.getElementById('lbl-rank2').innerText = t.r2;
+      document.getElementById('lbl-rank3').innerText = t.r3;
+
+      document.getElementById('lbl-w1-title').innerText = t.w1Title;
+      document.getElementById('lbl-w1-sub').innerText = t.w1Sub;
+      document.getElementById('lbl-w2-title').innerText = t.w2Title;
+      document.getElementById('lbl-w2-sub').innerText = t.w2Sub;
+      document.getElementById('lbl-m1-title').innerText = t.m1Title;
+      document.getElementById('lbl-m1-sub').innerText = t.m1Sub;
+      document.getElementById('lbl-m2-title').innerText = t.m2Title;
+      document.getElementById('lbl-m2-sub').innerText = t.m2Sub;
+      document.getElementById('lbl-m5-title').innerText = t.m5Title;
+      document.getElementById('lbl-m5-sub').innerText = t.m5Sub;
+
+      document.getElementById('lbl-spin-title').innerText = t.spinTitle;
+      document.getElementById('lbl-spin-sub').innerText = t.spinSub;
+      document.getElementById('lbl-spin-prizes').innerText = t.spinPrizes;
+
+      document.getElementById('lbl-mytickets-title').innerText = t.myTicketsTitle;
+      document.getElementById('lbl-mytickets-sub').innerText = t.myTicketsSub;
+      document.getElementById('lbl-no-tickets').innerText = t.noTickets;
+
+      document.getElementById('lbl-profile-title').innerText = t.profileTitle;
+      document.getElementById('lbl-tg-name-title').innerText = t.tgNameTitle;
+      document.getElementById('lbl-balance-title').innerText = t.balanceTitle;
+      document.getElementById('lbl-phone-input').innerText = t.phoneInput;
+      document.getElementById('lbl-save-profile').innerText = t.saveProfile;
+
+      document.getElementById('lbl-admin-title').innerText = t.adminTitle;
+      document.getElementById('lbl-admin-sub').innerText = t.adminSub;
+
+      document.getElementById('lbl-dep-warn').innerText = t.depWarn;
+      document.getElementById('lbl-receipt-upload').innerText = t.receiptUpload;
+      document.getElementById('lbl-sub-receipt').innerText = t.subReceipt;
+      document.getElementById('lbl-with-info').innerText = t.withInfo;
+      document.getElementById('lbl-with-amt').innerText = t.withAmt;
+      document.getElementById('lbl-with-acc').innerText = t.withAcc;
+      document.getElementById('lbl-sub-with').innerText = t.subWith;
+      document.getElementById('lbl-close-modal').innerText = t.closeModal;
+
       document.getElementById('nav-home').innerText = t.navHome;
       document.getElementById('nav-spin').innerText = t.navSpin;
       document.getElementById('nav-tickets').innerText = t.navTickets;
-      document.getElementById('nav-admin').innerText = t.navAdmin;
+      document.getElementById('nav-profile').innerText = t.navProfile;
     }
 
-    // Tab Switcher Logic
     function switchTab(tabName, element) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      
       document.getElementById('tab-' + tabName).classList.add('active');
       element.classList.add('active');
     }
 
-    // Render Ticket Grid Helper
-    function generateGrids() {
-      const config = [
-        { id: 'grid-daily', count: 12, name: 'Guyyaa 1' },
-        { id: 'grid-week1', count: 12, name: 'Torbee 1' },
-        { id: 'grid-week2', count: 12, name: 'Torbee 2' },
-        { id: 'grid-month1', count: 12, name: 'Ji\'a 1' },
-        { id: 'grid-month2', count: 12, name: 'Ji\'a 2' },
-        { id: 'grid-month5', count: 12, name: 'Ji\'a 5' }
+    function openModal(type) {
+      if (isBanned) {
+        alert("Sa'aatii 5f ugguramtu: Suuraa kaffaltii sobaa upload gochuu keessaniif yeroof tajaajilli keessan dhaabbateera!");
+        return;
+      }
+      document.getElementById('paymentModal').classList.add('active');
+      if (type === 'deposit') {
+        document.getElementById('modal-title').innerText = "DEPOSIT PAYMENT";
+        document.getElementById('deposit-sec').style.display = "block";
+        document.getElementById('withdraw-sec').style.display = "none";
+      } else {
+        document.getElementById('modal-title').innerText = "WITHDRAW MONEY";
+        document.getElementById('deposit-sec').style.display = "none";
+        document.getElementById('withdraw-sec').style.display = "block";
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('paymentModal').classList.remove('active');
+    }
+
+    function submitDeposit() {
+      const fileInput = document.getElementById('receipt-file');
+      if (!fileInput.files.length) {
+        alert("Maaloo suuraa ragaa kaffaltii upload godhaa!");
+        return;
+      }
+      const isFake = Math.random() < 0.2;
+      if (isFake) {
+        isBanned = true;
+        closeModal();
+        alert("Kaffaltii Sobaa! Suuraa sirrii hin taane upload gochuu keessaniif sa'aatii 5f tajaajilli keessan addaan citeera.");
+        setTimeout(() => { isBanned = false; }, 5 * 3600 * 1000);
+        return;
+      }
+      balance += 500;
+      updateBalance();
+      closeModal();
+      alert("Suuraan kaffaltii ergameera! Admin erga mirkaneessee booda Baalansiin keessan ni dabalama.");
+    }
+
+    function submitWithdraw() {
+      const amt = parseFloat(document.getElementById('withdraw-amount').value);
+      if (isNaN(amt) || amt <= 0 || amt > balance) {
+        alert("Maallaqa baasuu barbaaddan sirriitti galchaa ykn baalansii gahaa hin qabdan!");
+        return;
+      }
+      balance -= amt;
+      updateBalance();
+      closeModal();
+      alert(`Gaaffiin baasii ${amt} Br ergameera. Daqiiqaa 15 keessatti isiniif ergama.`);
+    }
+
+    function updateBalance() {
+      document.getElementById('user-balance').innerText = balance.toFixed(2) + " Br";
+      document.getElementById('profile-balance').innerText = balance.toFixed(2) + " Br";
+    }
+
+    function renderGrids() {
+      const tiers = [
+        { id: 'grid-week1', name: 'Torbee 1', max: 15, price: 200, days: 7 },
+        { id: 'grid-week2', name: 'Torbee 2', max: 15, price: 200, days: 15 },
+        { id: 'grid-month1', name: 'Ji\'a 1', max: 15, price: 250, days: 30 },
+        { id: 'grid-month2', name: 'Ji\'a 2', max: 15, price: 300, days: 60 },
+        { id: 'grid-month5', name: 'Ji\'a 5', max: 15, price: 500, days: 150 }
       ];
 
-      config.forEach(item => {
-        const grid = document.getElementById(item.id);
+      tiers.forEach(t => {
+        const grid = document.getElementById(t.id);
         grid.innerHTML = '';
-        for (let i = 1; i <= item.count; i++) {
+        for (let i = 1; i <= t.max; i++) {
+          const key = `${t.name}_${i}`;
+          const isTaken = takenTickets[key];
           const btn = document.createElement('button');
-          btn.className = 'ticket-btn';
-          btn.innerHTML = `#${i} 🎟️`;
-          btn.onclick = () => selectAndBuy(item.name, i);
+          btn.className = 'ticket-btn' + (isTaken ? ' taken' : '');
+          btn.innerHTML = `${i}_Tiket ${isTaken ? '✅' : '◼️'}`;
+          btn.onclick = () => buyTicket(t.name, i, t.price, t.days);
           grid.appendChild(btn);
         }
       });
     }
 
-    // Buy / Select Ticket Logic
-    function selectAndBuy(tierName, num) {
-      const ticketName = `${tierName} - Ticket #${num}`;
-      myTickets.push(ticketName);
-      updateMyTicketsList();
-      alert(`Baga gammaddan! ${ticketName} milka'inaan bittaniittu.`);
-    }
-
-    function buyTicket(type, price) {
-      if (balance < price) {
-        alert("Baalansiin keessan gahaa miti! Maaloo Deposit godhaa.");
+    function buyTicket(tierName, num, price, days) {
+      if (isBanned) {
+        alert("Sa'aatii 5f ugguramtu!");
         return;
       }
+      if (balance < price) {
+        alert(`Haften Herrega keessanii gahaa miti (Tikettii kanaaf ${price} Br barbaachisa). Maaloo Deposit godhaa!`);
+        openModal('deposit');
+        return;
+      }
+      const key = `${tierName}_${num}`;
+      if (takenTickets[key]) {
+        alert("Lakkoofsi tikettii kun dursee filatameera, maaloo lakkoofsa biroo muradhaa!");
+        return;
+      }
+
       balance -= price;
       updateBalance();
-      myTickets.push(`Carraa ${type} (450 Br)`);
+      takenTickets[key] = true;
+      
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + days);
+      userTickets.push({ name: `${tierName} - Tiket #${num}`, date: expiry.toLocaleDateString() });
+      
+      renderGrids();
       updateMyTicketsList();
-      alert(`Tikettii Bilbilaa bittaniittu!`);
+      alert(`Baga gammaddan! Tiket #${num} (${tierName}) bittaniittu.`);
+    }
+
+    function buyPhoneTicket() {
+      if (balance < 450) {
+        alert("Haften Herrega keessanii gahaa miti! Tikettii Bilbilaaf 450 Br barbaachisa.");
+        openModal('deposit');
+        return;
+      }
+      balance -= 450;
+      updateBalance();
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 30);
+      userTickets.push({ name: "Carraa Bilbilaa (450 Br)", date: expiry.toLocaleDateString() });
+      updateMyTicketsList();
+      alert("Tikettii Bilbilaa Mobaayilaa bittaniittu!");
     }
 
     function updateMyTicketsList() {
       const container = document.getElementById('my-tickets-list');
-      if (myTickets.length === 0) {
-        container.innerHTML = `<p style="text-align:center; font-size:12px; color:var(--text-sub);">Ammaaf tikkeettiin bittan hin jiru.</p>`;
+      if (userTickets.length === 0) {
+        const noText = translations[currentLang].noTickets;
+        container.innerHTML = `<p style="text-align:center; font-size:12px; color:var(--text-sub);">${noText}</p>`;
         return;
       }
-      container.innerHTML = myTickets.map(t => `<div style="background:var(--card-inner); padding:10px; border-radius:8px; margin-bottom:6px; font-size:12px; font-weight:bold; border-left:3px solid var(--gold);">${t} - <span style="color:var(--green)">Active</span></div>`).join('');
+      container.innerHTML = userTickets.map(t => `<div style="background:var(--card-inner); padding:10px; border-radius:8px; margin-bottom:6px; font-size:11px; font-weight:bold; border-left:3px solid var(--gold);">🎟️ ${t.name} <br><span style="color:var(--text-sub); font-size:9.5px;">Guyyaa itti dhumatu: ${t.date}</span></div>`).join('');
     }
 
-    // Wallet Deposit & Withdraw
-    function processMoney(type) {
-      const val = parseFloat(document.getElementById('amount-input').value);
-      if (isNaN(val) || val <= 0) {
-        alert("Maaloo hanga maallaqaa sirrii galchaa!");
-        return;
-      }
-      if (type === 'deposit') {
-        balance += val;
-        alert(`${val} Br Baalansii keessanitti dabalameera!`);
-      } else if (type === 'withdraw') {
-        if (val > balance) {
-          alert("Maallaqa baasuu barbaaddan baalansii keessan ni caala!");
-          return;
-        }
-        balance -= val;
-        alert(`${val} Br Baasii gochuuf gaaffiin keessan darbeera!`);
-      }
-      updateBalance();
-      document.getElementById('amount-input').value = '';
-    }
-
-    function updateBalance() {
-      document.getElementById('user-balance').innerText = balance.toFixed(2) + " Br";
-    }
-
-    function saveProfile() {
-      const phone = document.getElementById('user-phone').value;
-      if (!phone) alert("Maaloo lakkoofsa bilbilaa galchaa");
-      else alert("Profile keessan saavee ta'eera!");
-    }
-
-    // Geengoo SPIN Canvas
+    // Spin Setup
     const canvas = document.getElementById('wheelCanvas');
     const ctx = canvas.getContext('2d');
-    const rewards = ["3 Br", "5 Br", "10 Br", "15 Br", "25 Br", "50 Br", "100 Br", "200 Br", "500 Br", "1,000 Br"];
-    const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#e67e22", "#1abc9c", "#d35400", "#c0392b", "#16a085"];
+    const rewards = ["3 Br", "5 Br", "10 Br", "15 Br", "25 Br", "50 Br", "100 Br", "150 Br", "200 Br", "500 Br", "1,000 Br"];
+    const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#e67e22", "#1abc9c", "#d35400", "#c0392b", "#16a085", "#8e44ad"];
     let currentAngle = 0;
 
     function drawWheel() {
@@ -662,21 +895,40 @@
         ctx.rotate(angle + arcSize / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px Sans-Serif";
-        ctx.fillText(rewards[i], radius - 10, 4);
+        ctx.font = "bold 10px Sans-Serif";
+        ctx.fillText(rewards[i], radius - 8, 4);
         ctx.restore();
       }
     }
 
     function spin() {
-      if (balance < 5) {
-        alert("Spin naannessuuf baalansii gahaa (5 Br) hin qabdan!");
+      if (isBanned) {
+        alert("Sa'aatii 5f ugguramtu!");
         return;
       }
+      if (balance < 5) {
+        alert("Spin naannessuuf baalansii gahaa (5 Br) hin qabdan! Maaloo Deposit godhaa.");
+        openModal('deposit');
+        return;
+      }
+
       balance -= 5;
+      spinCount++;
       updateBalance();
 
-      const spinAngle = Math.floor(Math.random() * 360) + 1440;
+      let prizeIndex = 0;
+      if (spinCount === 2) prizeIndex = 3;
+      else if (spinCount === 3) prizeIndex = 2;
+      else if (spinCount === 20) prizeIndex = 5;
+      else if (spinCount === 50) prizeIndex = 7;
+      else {
+        prizeIndex = Math.floor(Math.random() * 5);
+      }
+
+      const segmentAngle = 360 / rewards.length;
+      const targetAngle = 360 - (prizeIndex * segmentAngle) - (segmentAngle / 2);
+      const totalSpin = 1440 + targetAngle;
+
       let duration = 3000;
       let start = null;
 
@@ -686,18 +938,22 @@
         let easeOut = Math.pow(1 - progress / duration, 3);
         
         if (progress < duration) {
-          currentAngle += (spinAngle * easeOut * Math.PI / 180) / 20;
+          currentAngle = (totalSpin * (1 - easeOut)) * Math.PI / 180;
           drawWheel();
           requestAnimationFrame(animate);
+        } else {
+          const wonText = rewards[prizeIndex];
+          const prizeAmt = parseFloat(wonText.replace(/[^0-9]/g, ''));
+          balance += prizeAmt;
+          updateBalance();
+          alert(`Baga gammaddan! Spin naannessuun ${wonText} mo'attaniittu.`);
         }
       }
       requestAnimationFrame(animate);
     }
 
-    // Init
     drawWheel();
-    generateGrids();
+    renderGrids();
   </script>
 </body>
 </html>
-
