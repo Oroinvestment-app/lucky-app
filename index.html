@@ -17,7 +17,7 @@
       --text-sub: #8b949e;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 70px; user-select: none; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 75px; user-select: none; }
     
     /* Header Navbar */
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #161b22; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
@@ -35,29 +35,36 @@
     .section.active { display: block; }
 
     /* Banner Announcement */
-    .hero-banner { background: linear-gradient(135deg, rgba(243,156,18,0.15), rgba(0,0,0,0.4)); border: 1px solid var(--accent-gold); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 20px; }
-    .hero-banner h2 { color: var(--accent-gold); font-size: 16px; margin-bottom: 6px; text-transform: uppercase; }
-    .hero-banner p { font-size: 12px; color: var(--text-sub); }
+    .hero-banner { background: linear-gradient(135deg, rgba(243,156,18,0.15), rgba(0,0,0,0.4)); border: 1px solid var(--accent-gold); border-radius: 12px; padding: 20px 16px; text-align: center; margin-bottom: 20px; margin-top: 8px; }
+    .hero-banner h2 { color: var(--accent-gold); font-size: 14px; margin-bottom: 8px; text-transform: uppercase; line-height: 1.4; }
+    .hero-banner p { font-size: 12px; color: var(--text-sub); line-height: 1.4; }
 
-    /* Phone Podium Section */
-    .podium-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: center; }
-    .podium-title { font-size: 14px; font-weight: bold; color: var(--accent-gold); margin-bottom: 12px; }
-    .podium-stage { display: flex; justify-content: space-around; align-items: flex-end; height: 160px; margin-bottom: 16px; }
-    .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; }
-    .podium-rank { font-size: 12px; font-weight: bold; color: var(--accent-gold); margin-bottom: 4px; }
-    .podium-img { width: 45px; height: 65px; object-fit: contain; margin-bottom: 6px; border-radius: 4px; }
-    .podium-base { width: 100%; border-radius: 6px 6px 0 0; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; color: #fff; padding: 8px 2px; }
-    .p-1 { height: 75px; background: linear-gradient(180deg, #f1c40f, #b7950b); order: 2; width: 34%; }
-    .p-2 { height: 60px; background: linear-gradient(180deg, #95a5a6, #7f8c8d); order: 1; }
-    .p-3 { height: 50px; background: linear-gradient(180deg, #d35400, #a04000); order: 3; }
-    .btn-buy-phone { width: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f); border: none; padding: 12px; border-radius: 8px; font-weight: bold; color: #000; font-size: 14px; cursor: pointer; }
+    /* Notice Live Ticker Banner */
+    .live-notice { background: rgba(231, 76, 60, 0.15); border: 1px solid var(--accent-red); border-radius: 10px; padding: 14px; margin-bottom: 20px; font-size: 12px; color: #ffb4ab; line-height: 1.5; text-align: left; }
+    .live-notice strong { color: #fff; display: block; margin-bottom: 4px; }
 
-    /* Ticket Grid Sections */
+    /* Fixed Phone Podium Section */
+    .podium-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: center; display: flex; flex-direction: column; }
+    .podium-title { font-size: 13px; font-weight: bold; color: var(--accent-gold); margin-bottom: 16px; line-height: 1.3; }
+    
+    .podium-stage { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin-bottom: 20px; padding: 0 4px; }
+    .podium-item { display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 30%; }
+    .podium-rank { font-size: 11px; font-weight: bold; color: var(--accent-gold); margin-bottom: 4px; }
+    .podium-img { width: 35px; height: 50px; object-fit: contain; margin-bottom: 4px; border-radius: 4px; }
+    .podium-base { width: 100%; border-radius: 6px 6px 0 0; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: #fff; padding: 8px 2px; text-align: center; word-break: break-word; }
+    
+    .p-1 { height: 80px; background: linear-gradient(180deg, #f1c40f, #b7950b); order: 2; }
+    .p-2 { height: 65px; background: linear-gradient(180deg, #95a5a6, #7f8c8d); order: 1; }
+    .p-3 { height: 55px; background: linear-gradient(180deg, #d35400, #a04000); order: 3; }
+    
+    .btn-buy-phone { width: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f); border: none; padding: 14px; border-radius: 8px; font-weight: bold; color: #000; font-size: 14px; cursor: pointer; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+    /* Dynamic Ticket Grid */
     .ticket-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-    .ticket-header { margin-bottom: 12px; }
-    .ticket-title { font-size: 14px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .ticket-info { font-size: 11px; color: var(--text-sub); margin-top: 4px; }
-    .ticket-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+    .ticket-header { margin-bottom: 12px; text-align: left; }
+    .ticket-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+    .ticket-info { font-size: 11px; color: var(--text-sub); line-height: 1.4; }
+    .ticket-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
     .ticket-btn { background: #21262d; border: 1px solid var(--border-color); color: #fff; padding: 10px 4px; border-radius: 6px; font-size: 12px; text-align: center; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px; }
     .ticket-btn.booked { background: #2d1517; border-color: var(--accent-red); color: var(--text-sub); cursor: not-allowed; }
 
@@ -68,7 +75,7 @@
     .wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--accent-gold); transition: transform 4s cubic-bezier(0.15, 0.99, 0.15, 0.99); position: relative; overflow: hidden; }
     .center-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; background: var(--accent-gold); border-radius: 50%; border: 3px solid #fff; font-weight: bold; color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; font-size: 12px; }
 
-    /* Bottom Navigation */
+    /* Bottom Navigation Bar */
     .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #161b22; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
     .tab-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); font-size: 11px; cursor: pointer; text-decoration: none; }
     .tab-item.active { color: var(--accent-gold); font-weight: bold; }
@@ -112,6 +119,12 @@
       <div class="hero-banner">
         <h2 id="heroTitle">TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!</h2>
         <p id="heroSub">Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.</p>
+      </div>
+
+      <!-- Live Notice Announcement -->
+      <div class="live-notice" id="liveNoticeText">
+        <strong>⚠️ HUBACHIISA HAR'AA:</strong> 
+        Ammas yeroo maamilli guyyaa dhuma Ticket gahe Carraa tokkolle hin moo'anne carraan torbe 1ffaafi 2ffaan Abbooti carraatif bahaniru. Maaloo carraawwan gurguddaa moo'achuf ammuma Ticket bitachuun lakkoofsa jaalattan filadhaa! Carraawwan yoo moo'attan battalumatti maqaafi badhaasonni keessan gara ergaa gabaabaatiin isiniif ergama. Akkasuma bashaanisni isin moo'attan battaluma dhuma guyyaa Ticket irratti hundaa'e ofuma isaaf Balance keessanirratti dabalama. Carraa gaarii!
       </div>
 
       <!-- Phone Podium Category -->
@@ -160,7 +173,7 @@
     <div id="myTicketTab" class="section">
       <h3 style="color:var(--accent-gold); margin-bottom:12px;" id="myTicketsTitle">🎫 Tikkeettiwwan Koo</h3>
       <div id="myTicketsList" style="font-size:13px;">
-        <p style="color:var(--text-sub);">Hanga ammaatti tikkeettii hin bunne.</p>
+        <p style="color:var(--text-sub);" id="noTicketsText">Hanga ammaatti tikkeettii hin bunne.</p>
       </div>
     </div>
 
@@ -203,7 +216,7 @@
   <!-- Deposit Modal -->
   <div class="modal-overlay" id="depositModal">
     <div class="modal-box">
-      <div class="modal-title">DEPOSIT PAYMENT</div>
+      <div class="modal-title" id="modalDepTitle">DEPOSIT PAYMENT</div>
       <div class="bank-info">
         <strong>CBE BANK ACCOUNT:</strong> 1000609844292<br>
         <strong>NAME:</strong> GELETA ADEM<br><hr style="border-color:var(--border-color); margin:6px 0;">
@@ -213,17 +226,17 @@
       <div class="notice-warn" id="depositWarn">
         ⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f uggura! Kaffaltiin 10 Br gadii hin danda'amu.
       </div>
-      <p style="font-size:12px; text-align:left; margin-bottom:6px;">Suuraa Ragaa Kaffaltii (Receipt Screenshot)</p>
+      <p style="font-size:12px; text-align:left; margin-bottom:6px;" id="modalReceiptText">Suuraa Ragaa Kaffaltii (Receipt Screenshot)</p>
       <input type="file" id="receiptInput" class="input-field" accept="image/*">
-      <button class="btn-submit" onclick="submitDeposit()">Submit Receipt</button>
-      <button class="btn-close" onclick="closeModal('depositModal')">Close</button>
+      <button class="btn-submit" id="btnSubmitReceipt" onclick="submitDeposit()">Submit Receipt</button>
+      <button class="btn-close" id="btnCloseDep" onclick="closeModal('depositModal')">Close</button>
     </div>
   </div>
 
   <!-- Withdraw Modal -->
   <div class="modal-overlay" id="withdrawModal">
     <div class="modal-box">
-      <div class="modal-title">WITHDRAWAL</div>
+      <div class="modal-title" id="modalWithTitle">WITHDRAWAL</div>
       <p class="modal-desc" id="withdrawDesc">Maallaqa baafachuuf karaa CBE ykn Telebirr qofa fayyadamuu dandeessu. Daqiiqaa 15 keessatti siif ergama.</p>
       <select class="input-field">
         <option>CBE BANK</option>
@@ -231,20 +244,18 @@
       </select>
       <input type="number" placeholder="Hanga maallaqaa (Amount)" class="input-field" id="withdrawAmount">
       <input type="text" placeholder="Lakkoofsa Akkaangii/Bilbilaa" class="input-field">
-      <button class="btn-submit" onclick="submitWithdrawal()">Request Withdrawal</button>
-      <button class="btn-close" onclick="closeModal('withdrawModal')">Close</button>
+      <button class="btn-submit" id="btnSubmitWith" onclick="submitWithdrawal()">Request Withdrawal</button>
+      <button class="btn-close" id="btnCloseWith" onclick="closeModal('withdrawModal')">Close</button>
     </div>
   </div>
 
   <script>
-    // System State Variables
     let balance = 0.00;
     let spinCount = 0;
     let userTickets = [];
-    let bookedTickets = {}; // System tracking for booked tickets
+    let bookedTickets = {};
     let currentLang = 'om';
     
-    // Telegram Integration
     const tg = window.Telegram?.WebApp;
     if(tg) {
       tg.expand();
@@ -252,7 +263,6 @@
       document.getElementById('userTgName').innerText = "@" + username;
     }
 
-    // Categories Configuration
     const ticketConfigs = [
       { id: 't1', title: '📅 CARRAA TORBEE 1 (TURTI: GUYYAA 7)', cost: 200, max: 800, p1: '50,000 Br', p2: '15,000 Br', p3: '5,000 Br', days: 7 },
       { id: 't2', title: '📅 CARRAA TORBEE 2 (TURTI: GUYYAA 15)', cost: 200, max: 1000, p1: '75,000 Br', p2: '30,000 Br', p3: '10,000 Br', days: 15 },
@@ -261,37 +271,81 @@
       { id: 't5', title: '📅 CARRAA JI\'A 5 (TURTI: GUYYAA 150)', cost: 500, max: 2000, p1: '250,000 Br', p2: '150,000 Br', p3: '50,000 Br', days: 150 }
     ];
 
-    // Language Translations
     const translations = {
       om: {
         heroTitle: "TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!",
         heroSub: "Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.",
+        liveNotice: "<strong>⚠️ HUBACHIISA HAR'AA:</strong> Ammas yeroo maamilli guyyaa dhuma Ticket gahe Carraa tokkolle hin moo'anne carraan torbe 1ffaafi 2ffaan Abbooti carraatif bahaniru. Maaloo carraawwan gurguddaa moo'achuf ammuma Ticket bitachuun lakkoofsa jaalattan filadhaa! Carraawwan yoo moo'attan battalumatti maqaafi badhaasonni keessan gara ergaa gabaabaatiin isiniif ergama. Akkasuma bashaanisni isin moo'attan battaluma dhuma guyyaa Ticket irratti hundaa'e ofuma isaaf Balance keessanirratti dabalama. Carraa gaarii!",
         phoneTitle: "📱 CARRAA BILBILOOTA MOBAAYILAA (Kaffaltii: 450 Br)",
         buyPhone: "Tikettii Bilbilaa Biti (450 Br)",
         spinHeader: "⚙️ CARRAA GUYYAA (SPIN)",
         spinCost: "Si'a 1 Spin naannessuuf kaffaltiini: 5 Br",
+        spinPrizes: "Badhaasota Spin: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTickets: "🎫 Tikkeettiwwan Koo",
-        depWarn: "⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f uggura! Kaffaltiin 10 Br gadii hin danda'amu."
+        noTickets: "Hanga ammaatti tikkeettii hin bunne.",
+        profile: "👤 Profile",
+        tabHome: "Home",
+        tabSpin: "Spin",
+        tabMyTicket: "Tikkeettii Koo",
+        tabProfile: "Profile/Admin",
+        depTitle: "DEPOSIT PAYMENT",
+        depWarn: "⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f uggura! Kaffaltiin 10 Br gadii hin danda'amu.",
+        recText: "Suuraa Ragaa Kaffaltii (Receipt Screenshot)",
+        btnSubRec: "Submit Receipt",
+        btnClose: "Close",
+        withTitle: "WITHDRAWAL",
+        withDesc: "Maallaqa baafachuuf karaa CBE ykn Telebirr qofa fayyadamuu dandeessu. Daqiiqaa 15 keessatti siif ergama.",
+        btnSubWith: "Request Withdrawal"
       },
       am: {
         heroTitle: "የእድል ጎማ በማሽከርከር አሁኑኑ ታላላቅ ሽልማቶችን ያሸንፉ!",
         heroSub: "እንኳን ወደ AWARDS Mini App በሰላም መጡ። የዕድል ትኬቶችን በመቁረጥ ትልልቅ ሽልማቶችን ያሸንፉ።",
+        liveNotice: "<strong>⚠️ የዛሬ ማሳሰቢያ:</strong> አሁንም ደንበኛው የቲኬቱ የመጨረሻ ቀን ሲደርስ ምንም ዕድል ሳያሸንፍ ሲቀር የ1ኛ እና 2ኛ ሳምንት ዕድሎች ለዕድለኞች ወጥተዋል። እባክዎ ታላላቅ ሽልማቶችን ለማሸነፍ አሁኑኑ ቲኬት በመግዛት የሚወዱትን ቁጥር ይምረጡ! ዕድሎችን ካሸነፉ ወዲያውኑ ስምዎ እና ሽልማቶችዎ በአጭር የጽሁፍ መልእክት ይላክልዎታል። እንዲሁም ያሸነፉት ሽልማት በቲኬቱ ማጠናቀቂያ ቀን ላይ ተመስርቶ ራሱ በራሱ ወደ አካውንትዎ ቀሪ ሂሳብ (Balance) ይጨመራል። መልካም ዕድል!",
         phoneTitle: "📱 የሞባይል ስልኮች ዕድል (ክፍያ: 450 Br)",
         buyPhone: "የስልክ ትኬት ቁረጥ (450 Br)",
         spinHeader: "⚙️ የዕለት ዕድል (SPIN)",
         spinCost: "አንድ ጊዜ ለማሽከርከር ክፍያ: 5 Br",
+        spinPrizes: "የስፒን ሽልማቶች: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTickets: "🎫 የእኔ ትኬቶች",
-        depWarn: "⚠️ ማሳሰቢያ፡ የሀሰተኛ ክፍያ ፎቶ መስቀል መለያዎን ለ5 ሰዓታት ያግደዋል! ከ10 ብር በታች አይፈቀድም።"
+        noTickets: "እስካሁን ምንም ትኬት አልገዙም።",
+        profile: "👤 Profile",
+        tabHome: "መነሻ",
+        tabSpin: "ስፒን",
+        tabMyTicket: "የእኔ ትኬቶች",
+        tabProfile: "መገለጫ/አስተዳዳሪ",
+        depTitle: "የሂሳብ ገቢ ማድረጊያ (DEPOSIT)",
+        depWarn: "⚠️ ማሳሰቢያ፡ የሀሰተኛ ክፍያ ፎቶ መስቀል መለያዎን ለ5 ሰዓታት ያግደዋል! ከ10 ብር በታች አይፈቀድም።",
+        recText: "የክፍያ ማረጋገጫ ፎቶ (Receipt Screenshot)",
+        btnSubRec: "ፎቶ ላክ",
+        btnClose: "ዝጋ",
+        withTitle: "ገንዘብ ማውጣት (WITHDRAWAL)",
+        withDesc: "ገንዘብ ለማውጣት በ CBE ወይም በቴሌብር ብቻ መጠቀም ይችላሉ። በ15 ደቂቃ ውስጥ ይላክልዎታል።",
+        btnSubWith: "የማውጣት ጥያቄ ላክ"
       },
       en: {
         heroTitle: "SPIN THE WHEEL AND WIN BIG PRIZES RIGHT NOW!",
         heroSub: "Welcome to AWARDS Mini App. Buy luck tickets and win huge prizes.",
+        liveNotice: "<strong>⚠️ DAILY NOTICE:</strong> Still, when the customer's ticket expiration date arrives without winning anything, the 1st and 2nd week prizes have already been drawn for the winners. Please buy tickets right now and choose your favorite number to win big prizes! If you win any prizes, your name and rewards will be sent to you via SMS/message immediately. Also, the reward you win will be automatically added to your balance based on the ticket completion date. Good luck!",
         phoneTitle: "📱 MOBILE PHONES CHANCE (Fee: 450 Br)",
         buyPhone: "Buy Phone Ticket (450 Br)",
         spinHeader: "⚙️ DAILY SPIN",
         spinCost: "Cost per 1 Spin: 5 Br",
+        spinPrizes: "Spin Prizes: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br",
         myTickets: "🎫 My Tickets",
-        depWarn: "⚠️ Warning: Uploading fake receipt blocks account for 5 hours! Minimum deposit is 10 Br."
+        noTickets: "You haven't bought any tickets yet.",
+        profile: "👤 Profile",
+        tabHome: "Home",
+        tabSpin: "Spin",
+        tabMyTicket: "My Tickets",
+        tabProfile: "Profile/Admin",
+        depTitle: "DEPOSIT PAYMENT",
+        depWarn: "⚠️ Warning: Uploading fake receipt blocks account for 5 hours! Minimum deposit is 10 Br.",
+        recText: "Receipt Screenshot",
+        btnSubRec: "Submit Receipt",
+        btnClose: "Close",
+        withTitle: "WITHDRAWAL",
+        withDesc: "You can withdraw via CBE or Telebirr only. It will be sent within 15 minutes.",
+        btnSubWith: "Request Withdrawal"
       }
     };
 
@@ -299,17 +353,39 @@
       const lang = document.getElementById('langSelect').value;
       currentLang = lang;
       const t = translations[lang];
+      
       document.getElementById('heroTitle').innerText = t.heroTitle;
       document.getElementById('heroSub').innerText = t.heroSub;
+      document.getElementById('liveNoticeText').innerHTML = t.liveNotice;
       document.getElementById('phoneCatTitle').innerText = t.phoneTitle;
       document.querySelector('.btn-buy-phone').innerText = t.buyPhone;
       document.getElementById('spinHeader').innerText = t.spinHeader;
       document.getElementById('spinCostInfo').innerText = t.spinCost;
+      document.getElementById('spinPrizesInfo').innerText = t.spinPrizes;
       document.getElementById('myTicketsTitle').innerText = t.myTickets;
+      document.getElementById('profileTitle').innerText = t.profile;
+      
+      // Bottom Tabs
+      document.getElementById('tabHome').innerText = t.tabHome;
+      document.getElementById('tabSpin').innerText = t.tabSpin;
+      document.getElementById('tabMyTicket').innerText = t.tabMyTicket;
+      document.getElementById('tabProfile').innerText = t.tabProfile;
+
+      // Modals
+      document.getElementById('modalDepTitle').innerText = t.depTitle;
       document.getElementById('depositWarn').innerText = t.depWarn;
+      document.getElementById('modalReceiptText').innerText = t.recText;
+      document.getElementById('btnSubmitReceipt').innerText = t.btnSubRec;
+      document.getElementById('btnCloseDep').innerText = t.btnClose;
+      
+      document.getElementById('modalWithTitle').innerText = t.withTitle;
+      document.getElementById('withdrawDesc').innerText = t.withDesc;
+      document.getElementById('btnSubmitWith').innerText = t.btnSubWith;
+      document.getElementById('btnCloseWith').innerText = t.btnClose;
+
+      renderMyTickets();
     }
 
-    // Render Ticket Categories dynamically
     function renderTickets() {
       const container = document.getElementById('ticketCategories');
       container.innerHTML = '';
@@ -338,15 +414,14 @@
       });
     }
 
-    // Buy Ticket Logic
     function buyTicket(catId, ticketNum, cost, days) {
       const ticketKey = `${catId}_${ticketNum}`;
       if(bookedTickets[ticketKey]) {
-        alert("Lakkoofsi tiket kun durse filatameera! Maaloo lakkoofsa biroo muradhaa.");
+        alert(currentLang === 'am' ? "ይህ የቲኬት ቁጥር አስቀድሞ ተመርጧል! እባክዎ ሌላ ቁጥር ይምረጡ።" : currentLang === 'en' ? "This ticket number is already booked! Please choose another." : "Lakkoofsi tiket kun durse filatameera! Maaloo lakkoofsa biroo muradhaa.");
         return;
       }
       if(balance < cost) {
-        alert(`Maaloo Tiket murachuuf Haften Herrega keessanii gahaa miti! Herrega guutun Tiket carraa bitadhaa (Kaffaltii: ${cost} Br).`);
+        alert(currentLang === 'am' ? `እባክዎ የሂሳብዎ ቀሪ ሂሳብ በቂ አይደለም! (ክፍያ: ${cost} Br)` : currentLang === 'en' ? `Insufficient balance! (Cost: ${cost} Br)` : `Maaloo Tiket murachuuf Haften Herrega keessanii gahaa miti! (Kaffaltii: ${cost} Br).`);
         openModal('depositModal');
         return;
       }
@@ -366,35 +441,35 @@
       updateBalanceDisplay();
       renderTickets();
       renderMyTickets();
-      alert(`🎉 Tikettii #${ticketNum} milkiidhaan murattaniirta!`);
+      alert(currentLang === 'am' ? `🎉 ቲኬት #${ticketNum} በሳካ ሁኔታ ቆርጠዋል!` : currentLang === 'en' ? `🎉 Successfully bought ticket #${ticketNum}!` : `🎉 Tikettii #${ticketNum} milkiidhaan murattaniirta!`);
     }
 
     function buyTicketCategory(name, cost) {
       if(balance < cost) {
-        alert(`Maaloo Haften Herrega keessanii gahaa miti! (Kaffaltii: ${cost} Br)`);
+        alert(currentLang === 'am' ? `ቀሪ ሂሳብዎ በቂ አይደለም! (ክፍያ: ${cost} Br)` : currentLang === 'en' ? `Insufficient balance! (Cost: ${cost} Br)` : `Maaloo Haften Herrega keessanii gahaa miti! (Kaffaltii: ${cost} Br)`);
         openModal('depositModal');
         return;
       }
       balance -= cost;
       updateBalanceDisplay();
-      alert(`🎉 Tikettii Carraa ${name} milkiidhaan bitattaniirta!`);
+      alert(currentLang === 'am' ? `🎉 የ${name} ዕድል ቲኬት በሳካ ሁኔታ ገዝተዋል!` : currentLang === 'en' ? `🎉 Successfully bought ${name} chance ticket!` : `🎉 Tikettii Carraa ${name} milkiidhaan bitattaniirta!`);
     }
 
     function renderMyTickets() {
       const list = document.getElementById('myTicketsList');
+      const t = translations[currentLang];
       if(userTickets.length === 0) {
-        list.innerHTML = `<p style="color:var(--text-sub);">Hanga ammaatti tikkeettii hin bunne.</p>`;
+        list.innerHTML = `<p style="color:var(--text-sub);">${t.noTickets}</p>`;
         return;
       }
-      list.innerHTML = userTickets.map(t => `
+      list.innerHTML = userTickets.map(item => `
         <div style="background:#21262d; border:1px solid var(--border-color); padding:10px; border-radius:6px; margin-bottom:8px;">
-          <strong>Tikettii Lakkoofsa: #${t.ticketNum}</strong><br>
-          <span style="color:var(--text-sub); font-size:11px;">Guraama (Expiry): ${t.expiry}</span>
+          <strong>Tikettii Lakkoofsa: #${item.ticketNum}</strong><br>
+          <span style="color:var(--text-sub); font-size:11px;">Guraama (Expiry): ${item.expiry}</span>
         </div>
       `).join('');
     }
 
-    // Spin Wheel Logic & Canvas Setup
     const prizes = [3, 5, 10, 15, 25, 50, 100, 150, 200, 500, 1000];
     const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#1abc9c', '#3498db', '#9b59b6', '#34495e', '#d35400', '#27ae60', '#8e44ad'];
     const canvas = document.getElementById('wheelCanvas');
@@ -422,7 +497,7 @@
     let currentRotation = 0;
     function spinWheel() {
       if(balance < 5) {
-        alert("Spin taphachuuf balance keessan 5 Br ol ta'uu qaba! Maaloo deposit godhaa.");
+        alert(currentLang === 'am' ? "ስፒን ለመጫወት ቢያንስ 5 ብር ሊኖርዎት ይገባል! እባክዎ ዴፖዚት ያድርጉ።" : currentLang === 'en' ? "You need at least 5 Br to spin! Please deposit." : "Spin taphachuuf balance keessan 5 Br ol ta'uu qaba! Maaloo deposit godhaa.");
         openModal('depositModal');
         return;
       }
@@ -431,14 +506,12 @@
       spinCount++;
       updateBalanceDisplay();
 
-      // System Smart Probability Engine
       let prizeWon = 3;
       if(spinCount === 2) prizeWon = 15;
       else if(spinCount === 3) prizeWon = 10;
       else if(spinCount === 20) prizeWon = 50;
       else if(spinCount === 50) prizeWon = 150;
       else {
-        // High prizes (500, 1000) capped by system limits
         const rand = Math.random();
         if(rand < 0.5) prizeWon = 3;
         else if(rand < 0.8) prizeWon = 5;
@@ -461,7 +534,6 @@
       }, 4000);
     }
 
-    // General Helpers
     function updateBalanceDisplay() {
       document.getElementById('balanceDisplay').innerText = balance.toFixed(2) + " Br";
       document.getElementById('profileBalance').innerText = balance.toFixed(2) + " Br";
@@ -480,26 +552,25 @@
     function submitDeposit() {
       const fileInput = document.getElementById('receiptInput');
       if(!fileInput.files || fileInput.files.length === 0) {
-        alert("Maaloo suuraa ragaa kaffaltii upload godhaa!");
+        alert(currentLang === 'am' ? "እባክዎ የክፍያ ማረጋገጫ ፎቶ ይስቀሉ!" : currentLang === 'en' ? "Please upload receipt screenshot!" : "Maaloo suuraa ragaa kaffaltii upload godhaa!");
         return;
       }
-      alert("Suuraan kaffaltii Admin irra ga'era. Kaffaltiin keessan mirkanaa'e daqiiqaa muraasa keessatti balance keessaniif ni dabalama!");
+      alert(currentLang === 'am' ? "የክፍያ ፎቶው ለአስተዳዳሪው ደርሷል። ክፍያዎ ሲረጋገጥ በደቂቃዎች ውስጥ ወደ ሂሳብዎ ይጨመራል!" : currentLang === 'en' ? "Receipt sent to Admin. It will be credited soon!" : "Suuraan kaffaltii Admin irra ga'era. Kaffaltiin keessan mirkanaa'e daqiiqaa muraasa keessatti balance keessaniif ni dabalama!");
       closeModal('depositModal');
     }
 
     function submitWithdrawal() {
       const amt = parseFloat(document.getElementById('withdrawAmount').value);
       if(!amt || amt <= 0 || amt > balance) {
-        alert("Hanga maallaqaa sirrii ta'e galchaa!");
+        alert(currentLang === 'am' ? "ትክክለኛ የገንዘብ መጠን ያስገቡ!" : currentLang === 'en' ? "Enter valid amount!" : "Hanga maallaqaa sirrii ta'e galchaa!");
         return;
       }
       balance -= amt;
       updateBalanceDisplay();
-      alert("Gaaffiin maallaqa baafachuu keessanii ergameera. Daqiiqaa 15 keessatti isin qaqqaba!");
+      alert(currentLang === 'am' ? "የገንዘብ ማውጣት ጥያቄዎ ተልኳል። በ15 ደቂቃ ውስጥ ይደርስዎታል!" : currentLang === 'en' ? "Withdrawal request sent. You will receive it in 15 minutes!" : "Gaaffiin maallaqa baafachuu keessanii ergameera. Daqiiqaa 15 keessatti isin qaqqaba!");
       closeModal('withdrawModal');
     }
 
-    // Init App
     drawWheel();
     renderTickets();
   </script>
