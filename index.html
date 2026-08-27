@@ -1,477 +1,703 @@
 <!DOCTYPE html>
 <html lang="om">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWARDS - Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: #0b0e14; color: #f0f6fc; padding-bottom: 90px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWARDS Mini App - Complete System</title>
+  <style>
+    :root {
+      --bg-color: #0b0d10;
+      --card-bg: #14171f;
+      --card-inner: #1d222e;
+      --gold: #ffc83b;
+      --gold-glow: #ffc83b66;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --text-main: #ffffff;
+      --text-sub: #a0a5b5;
+    }
 
-        /* Navigation Header */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #161b22; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 99; }
-        .logo-box { display: flex; align-items: center; gap: 10px; }
-        .app-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); object-fit: cover; }
-        .brand-name { font-size: 20px; font-weight: 900; letter-spacing: 1.5px; background: linear-gradient(90deg, #d97706, #fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .header-actions { display: flex; align-items: center; gap: 8px; }
-        .lang-select { background: #21262d; color: #fbbf24; border: 1px solid #30363d; border-radius: 8px; padding: 4px 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
-        .balance-badge { background: #21262d; border: 1px solid #10b981; border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 4px; }
+    body {
+      margin: 0;
+      padding: 10px;
+      padding-bottom: 70px;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        /* Container & Tabs */
-        .container { padding: 14px; max-width: 500px; margin: 0 auto; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+    /* Top Bar */
+    .header-bar {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 5px 0;
+    }
 
-        /* Deposit / Withdraw Buttons */
-        .top-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-        .btn-top { border: none; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-dep { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .btn-wd { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        /* Modals (Deposit/Withdraw) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #161b22; border: 1px solid #30363d; border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; position: relative; }
-        .close-modal { position: absolute; top: 12px; right: 16px; font-size: 20px; color: #8b949e; cursor: pointer; }
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #ffe600 0%, #b8860b 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 12px var(--gold-glow);
+      font-size: 20px;
+    }
 
-        /* Cards */
-        .card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 16px; margin-bottom: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .card-header { font-size: 16px; font-weight: 800; color: #fbbf24; text-align: center; margin-bottom: 6px; text-transform: uppercase; }
-        .card-desc { font-size: 12px; color: #8b949e; text-align: center; margin-bottom: 14px; line-height: 1.4; }
+    .logo-text {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff 30%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        /* Spin Design with Medallion Logo Background */
-        .spin-container { position: relative; width: 220px; height: 220px; margin: 0 auto 16px; border-radius: 50%; border: 4px solid #fbbf24; background: url('https://i.ibb.co/L8y2w1S/awards-logo.png') no-repeat center center; background-size: cover; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(251, 191, 36, 0.4); }
-        .spin-btn-center { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #fbbf24); color: #fff; font-weight: 900; font-size: 16px; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.7); }
-        
-        .spin-rewards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
-        .reward-badge { background: #0b0e14; border: 1px solid #30363d; padding: 6px; border-radius: 8px; text-align: center; font-size: 11px; color: #fbbf24; font-weight: 700; }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        /* Main Buttons */
-        .btn-main { width: 100%; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 10px; }
+    .balance-badge {
+      background: #16261c;
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 13px;
+    }
 
-        /* Phones Special Layout */
-        .phone-top-card { background: #0b0e14; border: 2px solid #fbbf24; border-radius: 14px; padding: 12px; text-align: center; margin-bottom: 12px; }
-        .phone-top-img { width: 120px; height: 110px; object-fit: contain; margin: 6px 0; }
-        
-        .phones-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .phone-sub-card { background: #0b0e14; border: 1px solid #30363d; border-radius: 12px; padding: 10px; text-align: center; }
-        .phone-sub-img { width: 70px; height: 70px; object-fit: contain; margin: 4px 0; }
+    .lang-select {
+      background: #1a1d24;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-        /* Ticket Grid Selector */
-        .ticket-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 200px; overflow-y: auto; padding: 6px; background: #0b0e14; border-radius: 10px; border: 1px solid #21262d; margin-top: 10px; }
-        .ticket-item { background: #161b22; border: 1px solid #30363d; padding: 8px; border-radius: 8px; font-size: 12px; text-align: center; cursor: pointer; font-weight: 700; }
-        .ticket-item.taken { background: #21262d; color: #ef4444; border-color: #ef4444; cursor: not-allowed; }
+    /* Tab Layouts */
+    .tab-content {
+      width: 100%;
+      max-width: 420px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
 
-        /* Bottom Fixed Navigation */
-        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #161b22; border-top: 1px solid #30363d; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-link { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #8b949e; text-decoration: none; font-size: 11px; font-weight: 700; }
-        .nav-link.active { color: #fbbf24; }
-        .nav-link i { font-size: 18px; }
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255, 200, 59, 0.15);
+    }
 
-        .bank-info { background: #0b0e14; border: 1px solid #f59e0b; padding: 10px; border-radius: 8px; font-size: 12px; line-height: 1.6; margin: 10px 0; }
-        .warning-text { font-size: 10px; color: #ef4444; margin-top: 6px; line-height: 1.3; }
-    </style>
+    .card-title {
+      text-align: center;
+      color: var(--gold);
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 11px;
+      margin-bottom: 12px;
+    }
+
+    /* Phone Podium */
+    .podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 8px;
+      height: 180px;
+      margin-bottom: 12px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .phone-img {
+      width: 50px;
+      height: 75px;
+      object-fit: contain;
+      margin-bottom: 5px;
+    }
+
+    .rank-box {
+      width: 100%;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 2px;
+      font-weight: bold;
+    }
+
+    .rank-1 { height: 100px; background: linear-gradient(180deg, #d4af37, #574406); border: 1px solid var(--gold); }
+    .rank-2 { height: 75px; background: linear-gradient(180deg, #a0a0a0, #3a3a3a); }
+    .rank-3 { height: 55px; background: linear-gradient(180deg, #cd7f32, #4a2e12); }
+
+    .rank-title { font-size: 9px; text-align: center; color: #fff; margin-top: 2px; }
+
+    /* Main Action Button */
+    .btn-main {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #ff9900 0%, #ffc83b 100%);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* Ticket Grid Scroll */
+    .ticket-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 140px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .ticket-btn {
+      background: var(--card-inner);
+      border: 1px solid rgba(255, 200, 59, 0.3);
+      color: #fff;
+      padding: 8px 4px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .ticket-btn.selected {
+      background: var(--gold);
+      color: #000;
+    }
+
+    /* Spin Wheel */
+    .spin-container {
+      position: relative;
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #wheelCanvas {
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 200, 59, 0.25);
+      border: 4px solid var(--gold);
+    }
+
+    .spin-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55px;
+      height: 55px;
+      background: radial-gradient(circle, #ffea68 0%, #ff9900 100%);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      color: #000;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 20px solid var(--gold);
+      z-index: 10;
+    }
+
+    /* Account / Forms */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: var(--card-inner);
+      color: #fff;
+      box-sizing: border-box;
+    }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-red { background: var(--red); color: #fff; }
+
+    /* Bottom Navigation Bar */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #11141c;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-sub);
+      font-size: 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    .nav-item.active {
+      color: var(--gold);
+    }
+    .nav-icon { font-size: 18px; margin-bottom: 2px; }
+  </style>
 </head>
 <body>
 
-    <!-- Header Area -->
-    <div class="top-bar">
-        <div class="logo-box">
-            <img src="https://i.ibb.co/L8y2w1S/awards-logo.png" alt="AWARDS" class="app-logo">
-            <div class="brand-name">AWARDS</div>
+  <!-- Top Header Bar -->
+  <div class="header-bar">
+    <div class="logo-container">
+      <div class="logo-badge">🏆</div>
+      <div class="logo-text">AWARDS</div>
+    </div>
+    <div class="top-actions">
+      <div class="balance-badge" id="user-balance">0.00 Br</div>
+      <select class="lang-select" onchange="changeLanguage(this.value)">
+        <option value="om">Oromoo</option>
+        <option value="am">አማርኛ</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- TAB 1: HOME (Podium & All Ticket Duration Tiers) -->
+  <div id="tab-home" class="tab-content active">
+    
+    <!-- Phone Ticket -->
+    <div class="card">
+      <div class="card-title" id="t-phone-title">📱 CARRAA BILBILOOTA MOBAAYILAA</div>
+      <div class="card-sub" id="t-phone-sub">Kaffaltii: 450 Br | Lakkoofsa: 1 - 3000</div>
+      
+      <div class="podium">
+        <div class="step">
+          <img class="phone-img" src="https://m.media-amazon.com/images/I/61g+8-gY34L._AC_SL1500_.jpg" alt="iPhone 13">
+          <div class="rank-box rank-2">
+            <span id="t-rank2">2ffaa</span>
+            <span class="rank-title">iPhone 13</span>
+          </div>
         </div>
-        <div class="header-actions">
-            <select class="lang-select" id="langSelect" onchange="changeLang()">
-                <option value="om">Oromoo</option>
-                <option value="am">አማርኛ</option>
-                <option value="en">English</option>
-            </select>
-            <div class="balance-badge">
-                <i class="fa-solid fa-coins"></i>
-                <span id="userBalance">0.00</span> Br
-            </div>
+        <div class="step">
+          <span style="font-size:16px;">👑</span>
+          <img class="phone-img" src="https://m.media-amazon.com/images/I/81sigweoV1L._AC_SL1500_.jpg" alt="iPhone 17 Pro">
+          <div class="rank-box rank-1">
+            <span id="t-rank1">1ffaa</span>
+            <span class="rank-title">iPhone 17 Pro</span>
+          </div>
         </div>
+        <div class="step">
+          <img class="phone-img" src="https://m.media-amazon.com/images/I/71qG45fJJZL._AC_SL1500_.jpg" alt="Samsung A17">
+          <div class="rank-box rank-3">
+            <span id="t-rank3">3ffaa</span>
+            <span class="rank-title">Samsung A17</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-main" onclick="buyTicket('Bilbila', 450)" id="t-btn-phone">Tikettii Bilbilaa Biti (450 Br)</button>
     </div>
 
-    <!-- MAIN HOME TAB -->
-    <div class="container tab-content active" id="tab-home">
+    <!-- Tier 1: Guyyaa (Daily) -->
+    <div class="card">
+      <div class="card-title">☀️ CARRAA GUYYAA (TURTI: GUYYAA 1)</div>
+      <div class="card-sub">Kaffaltii: 50 Br | Filannoo: 1 - 100 | Badhaasa: 5,000 Br</div>
+      <div class="ticket-grid" id="grid-daily"></div>
+    </div>
+
+    <!-- Tier 2: Torbee 1 -->
+    <div class="card">
+      <div class="card-title">🗓️ CARRAA TORBEE 1 (TURTI: GUYYAA 7)</div>
+      <div class="card-sub">Kaffaltii: 200 Br | Filannoo: 1 - 800 | 1ffaa: 50,000 Br</div>
+      <div class="ticket-grid" id="grid-week1"></div>
+    </div>
+
+    <!-- Tier 3: Torbee 2 -->
+    <div class="card">
+      <div class="card-title">🗓️ CARRAA TORBEE 2 (TURTI: GUYYAA 14)</div>
+      <div class="card-sub">Kaffaltii: 350 Br | Filannoo: 1 - 1500 | 1ffaa: 100,000 Br</div>
+      <div class="ticket-grid" id="grid-week2"></div>
+    </div>
+
+    <!-- Tier 4: Ji'a 1 -->
+    <div class="card">
+      <div class="card-title">📅 CARRAA JI'A 1 (TURTI: GUYYAA 30)</div>
+      <div class="card-sub">Kaffaltii: 500 Br | Filannoo: 1 - 3000 | 1ffaa: 250,000 Br</div>
+      <div class="ticket-grid" id="grid-month1"></div>
+    </div>
+
+    <!-- Tier 5: Ji'a 2 -->
+    <div class="card">
+      <div class="card-title">📅 CARRAA JI'A 2 (TURTI: GUYYAA 60)</div>
+      <div class="card-sub">Kaffaltii: 850 Br | Filannoo: 1 - 5000 | 1ffaa: 500,000 Br</div>
+      <div class="ticket-grid" id="grid-month2"></div>
+    </div>
+
+    <!-- Tier 6: Ji'a 5 -->
+    <div class="card">
+      <div class="card-title">🏆 CARRAA JI'A 5 (TURTI: GUYYAA 150)</div>
+      <div class="card-sub">Kaffaltii: 1500 Br | Filannoo: 1 - 10000 | 1ffaa: 1,500,000 Br</div>
+      <div class="ticket-grid" id="grid-month5"></div>
+    </div>
+
+  </div>
+
+  <!-- TAB 2: SPIN WHEEL -->
+  <div id="tab-spin" class="tab-content">
+    <div class="card" style="text-align: center;">
+      <div class="card-title" id="t-spin-title">⚙️ CARRAA GUYYAA (SPIN)</div>
+      <div class="card-sub" id="t-spin-sub">Si'a 1 Spin naannessuuf kaffaltiini: 5 Br</div>
+      
+      <div class="spin-container">
+        <div class="pointer"></div>
+        <canvas id="wheelCanvas" width="270" height="270"></canvas>
+        <button class="spin-btn" id="t-btn-spin" onclick="spin()">SPIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: MY TICKETS (Iddoo Tikkeettii) -->
+  <div id="tab-tickets" class="tab-content">
+    <div class="card">
+      <div class="card-title" id="t-mytickets-title">🎟️ TIKKEETTIIWWAN KOO</div>
+      <div class="card-sub">Tikkeettiiwwan bittan fi haala carraa isaanii</div>
+      <div id="my-tickets-list">
+        <p style="text-align:center; font-size:12px; color:var(--text-sub);">Ammaaf tikkeettiin bittan hin jiru.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ACCOUNT & ADMIN PANEL -->
+  <div id="tab-admin" class="tab-content">
+    <!-- Account Settings -->
+    <div class="card">
+      <div class="card-title">👤 AKSANNTII FAYYADAMAA</div>
+      <div class="form-group">
+        <label>Lakkoofsa Bilbilaa</label>
+        <input type="tel" class="form-control" id="user-phone" placeholder="09... Lakkoofsa keessan galchaa">
+      </div>
+      <button class="btn-main" onclick="saveProfile()">Profile Olkaayi</button>
+    </div>
+
+    <!-- Deposit & Withdrawal -->
+    <div class="card">
+      <div class="card-title">💳 KAFFALTII FI BAASII (WALLET)</div>
+      <div class="form-group">
+        <label>Hanga Maallaqaa (Br)</label>
+        <input type="number" class="form-control" id="amount-input" placeholder="Fakkeenyaaf: 500">
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-main btn-green" onclick="processMoney('deposit')">Deposit (Galchuu)</button>
+        <button class="btn-main btn-red" onclick="processMoney('withdraw')">Withdraw (Baasuu)</button>
+      </div>
+    </div>
+
+    <!-- Admin Management Panel -->
+    <div class="card" style="border-color: var(--red);">
+      <div class="card-title" style="color:var(--red);">⚙️ ADMIN PANEL (TO'ANNOO)</div>
+      <div class="card-sub">Badhaasota fi Mo'attota to'achuu</div>
+      <div class="form-group">
+        <label>Lakkoofsa Tikkeettii Mo'ataa Doorroosamaa</label>
+        <input type="text" class="form-control" placeholder="Fkn: Ticket #45 (Torbee 1)">
+      </div>
+      <button class="btn-main" style="background:var(--red); color:#fff;" onclick="alert('Mo\'ataan Mirkanaa\'eera!')">Mo'ataa Labsi (Announce Winner)</button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="navbar">
+    <button class="nav-item active" onclick="switchTab('home', this)">
+      <span class="nav-icon">🏠</span>
+      <span id="nav-home">Home</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('spin', this)">
+      <span class="nav-icon">⚙️</span>
+      <span id="nav-spin">Spin</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tickets', this)">
+      <span class="nav-icon">🎟️</span>
+      <span id="nav-tickets">Tikkeettii Koo</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('admin', this)">
+      <span class="nav-icon">👤</span>
+      <span id="nav-admin">Account & Admin</span>
+    </button>
+  </div>
+
+  <script>
+    // State Variables
+    let balance = 0;
+    let myTickets = [];
+    let currentLang = 'om';
+
+    // Translations Object
+    const translations = {
+      om: {
+        rank1: "1ffaa", rank2: "2ffaa", rank3: "3ffaa",
+        btnPhone: "Tikettii Bilbilaa Biti (450 Br)",
+        spinTitle: "⚙️ CARRAA GUYYAA (SPIN)",
+        spinSub: "Si'a 1 Spin naannessuuf kaffaltiini: 5 Br",
+        spinBtn: "SPIN",
+        myTicketsTitle: "🎟️ TIKKEETTIIWWAN KOO",
+        navHome: "Home", navSpin: "Spin", navTickets: "Tikkeettii Koo", navAdmin: "Account/Admin"
+      },
+      am: {
+        rank1: "1ኛ", rank2: "2ኛ", rank3: "3ኛ",
+        btnPhone: "የስልክ ቲኬት ይግዙ (450 Br)",
+        spinTitle: "⚙️ የዕለቱ ዕድል (ስፒን)",
+        spinSub: "ለ1 ስፒን ማሽከርከሪያ ክፍያ: 5 Br",
+        spinBtn: "አሽክርክር",
+        myTicketsTitle: "🎟️ የእኔ ቲኬቶች",
+        navHome: "ዋና ገጽ", navSpin: "ስፒን", navTickets: "የእኔ ቲኬቶች", navAdmin: "አካውንት/አድሚን"
+      },
+      en: {
+        rank1: "1st", rank2: "2nd", rank3: "3rd",
+        btnPhone: "Buy Phone Ticket (450 Br)",
+        spinTitle: "⚙️ DAILY LUCKY SPIN",
+        spinSub: "Fee per 1 Spin: 5 Br",
+        spinBtn: "SPIN",
+        myTicketsTitle: "🎟️ MY TICKETS",
+        navHome: "Home", navSpin: "Spin", navTickets: "My Tickets", navAdmin: "Account/Admin"
+      }
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+      document.getElementById('t-rank1').innerText = t.rank1;
+      document.getElementById('t-rank2').innerText = t.rank2;
+      document.getElementById('t-rank3').innerText = t.rank3;
+      document.getElementById('t-btn-phone').innerText = t.btnPhone;
+      document.getElementById('t-spin-title').innerText = t.spinTitle;
+      document.getElementById('t-spin-sub').innerText = t.spinSub;
+      document.getElementById('t-btn-spin').innerText = t.spinBtn;
+      document.getElementById('t-mytickets-title').innerText = t.myTicketsTitle;
+      document.getElementById('nav-home').innerText = t.navHome;
+      document.getElementById('nav-spin').innerText = t.navSpin;
+      document.getElementById('nav-tickets').innerText = t.navTickets;
+      document.getElementById('nav-admin').innerText = t.navAdmin;
+    }
+
+    // Tab Switcher Logic
+    function switchTab(tabName, element) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabName).classList.add('active');
+      element.classList.add('active');
+    }
+
+    // Render Ticket Grid Helper
+    function generateGrids() {
+      const config = [
+        { id: 'grid-daily', count: 12, name: 'Guyyaa 1' },
+        { id: 'grid-week1', count: 12, name: 'Torbee 1' },
+        { id: 'grid-week2', count: 12, name: 'Torbee 2' },
+        { id: 'grid-month1', count: 12, name: 'Ji\'a 1' },
+        { id: 'grid-month2', count: 12, name: 'Ji\'a 2' },
+        { id: 'grid-month5', count: 12, name: 'Ji\'a 5' }
+      ];
+
+      config.forEach(item => {
+        const grid = document.getElementById(item.id);
+        grid.innerHTML = '';
+        for (let i = 1; i <= item.count; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'ticket-btn';
+          btn.innerHTML = `#${i} 🎟️`;
+          btn.onclick = () => selectAndBuy(item.name, i);
+          grid.appendChild(btn);
+        }
+      });
+    }
+
+    // Buy / Select Ticket Logic
+    function selectAndBuy(tierName, num) {
+      const ticketName = `${tierName} - Ticket #${num}`;
+      myTickets.push(ticketName);
+      updateMyTicketsList();
+      alert(`Baga gammaddan! ${ticketName} milka'inaan bittaniittu.`);
+    }
+
+    function buyTicket(type, price) {
+      if (balance < price) {
+        alert("Baalansiin keessan gahaa miti! Maaloo Deposit godhaa.");
+        return;
+      }
+      balance -= price;
+      updateBalance();
+      myTickets.push(`Carraa ${type} (450 Br)`);
+      updateMyTicketsList();
+      alert(`Tikettii Bilbilaa bittaniittu!`);
+    }
+
+    function updateMyTicketsList() {
+      const container = document.getElementById('my-tickets-list');
+      if (myTickets.length === 0) {
+        container.innerHTML = `<p style="text-align:center; font-size:12px; color:var(--text-sub);">Ammaaf tikkeettiin bittan hin jiru.</p>`;
+        return;
+      }
+      container.innerHTML = myTickets.map(t => `<div style="background:var(--card-inner); padding:10px; border-radius:8px; margin-bottom:6px; font-size:12px; font-weight:bold; border-left:3px solid var(--gold);">${t} - <span style="color:var(--green)">Active</span></div>`).join('');
+    }
+
+    // Wallet Deposit & Withdraw
+    function processMoney(type) {
+      const val = parseFloat(document.getElementById('amount-input').value);
+      if (isNaN(val) || val <= 0) {
+        alert("Maaloo hanga maallaqaa sirrii galchaa!");
+        return;
+      }
+      if (type === 'deposit') {
+        balance += val;
+        alert(`${val} Br Baalansii keessanitti dabalameera!`);
+      } else if (type === 'withdraw') {
+        if (val > balance) {
+          alert("Maallaqa baasuu barbaaddan baalansii keessan ni caala!");
+          return;
+        }
+        balance -= val;
+        alert(`${val} Br Baasii gochuuf gaaffiin keessan darbeera!`);
+      }
+      updateBalance();
+      document.getElementById('amount-input').value = '';
+    }
+
+    function updateBalance() {
+      document.getElementById('user-balance').innerText = balance.toFixed(2) + " Br";
+    }
+
+    function saveProfile() {
+      const phone = document.getElementById('user-phone').value;
+      if (!phone) alert("Maaloo lakkoofsa bilbilaa galchaa");
+      else alert("Profile keessan saavee ta'eera!");
+    }
+
+    // Geengoo SPIN Canvas
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const rewards = ["3 Br", "5 Br", "10 Br", "15 Br", "25 Br", "50 Br", "100 Br", "200 Br", "500 Br", "1,000 Br"];
+    const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6", "#e67e22", "#1abc9c", "#d35400", "#c0392b", "#16a085"];
+    let currentAngle = 0;
+
+    function drawWheel() {
+      const numSegments = rewards.length;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = currentAngle + i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius - 4, angle, angle + arcSize);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px Sans-Serif";
+        ctx.fillText(rewards[i], radius - 10, 4);
+        ctx.restore();
+      }
+    }
+
+    function spin() {
+      if (balance < 5) {
+        alert("Spin naannessuuf baalansii gahaa (5 Br) hin qabdan!");
+        return;
+      }
+      balance -= 5;
+      updateBalance();
+
+      const spinAngle = Math.floor(Math.random() * 360) + 1440;
+      let duration = 3000;
+      let start = null;
+
+      function animate(timestamp) {
+        if (!start) start = timestamp;
+        let progress = timestamp - start;
+        let easeOut = Math.pow(1 - progress / duration, 3);
         
-        <!-- Action Buttons -->
-        <div class="top-btns">
-            <button class="btn-top btn-dep" onclick="openModal('depModal')"><i class="fa-solid fa-wallet"></i> <span class="txt-dep">Deposit</span></button>
-            <button class="btn-top btn-wd" onclick="openModal('wdModal')"><i class="fa-solid fa-money-bill-transfer"></i> <span class="txt-wd">Withdraw</span></button>
-        </div>
-
-        <!-- Banner Welcome -->
-        <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); border-color: #fbbf24;">
-            <div class="card-header" style="color:#fbbf24;" id="txt-welcome-head">Tapha naannessaa taphachuun ammuma badhaasota mo'adha!</div>
-            <div class="card-desc" style="color:#cbd5e1;" id="txt-welcome-sub">Baga gara AWARDS Mini App nagaaan dhuftan. Tikettiwwan carraa murachuun badhaasota gurguddoo mo'adhaa.</div>
-        </div>
-
-        <!-- DAILY SPIN SECTION -->
-        <div class="card">
-            <div class="card-header" id="txt-spin-head"><i class="fa-solid fa-dharmachakra"></i> Carraa Guyyaa (Spin)</div>
-            <div class="card-desc" id="txt-spin-desc">Si'a 1 Spin naannessuuf kaffaltiin: <strong>5 Br</strong></div>
-
-            <div class="spin-container">
-                <div class="spin-btn-center" onclick="playSpin()">SPIN</div>
-            </div>
-
-            <div style="font-size: 11px; font-weight: 700; color: #8b949e; text-align: center; margin-bottom: 4px;" id="txt-spin-rewards">Badhaasota Spin:</div>
-            <div class="spin-rewards-grid">
-                <div class="reward-badge">3 Br</div>
-                <div class="reward-badge">5 Br</div>
-                <div class="reward-badge">10 Br</div>
-                <div class="reward-badge">15 Br</div>
-                <div class="reward-badge">25 Br</div>
-                <div class="reward-badge">50 Br</div>
-                <div class="reward-badge">100 Br</div>
-                <div class="reward-badge">150 Br</div>
-                <div class="reward-badge">200 Br</div>
-                <div class="reward-badge">500 Br</div>
-                <div class="reward-badge">1,000 Br</div>
-            </div>
-
-            <button class="btn-main" onclick="playSpin()" id="btn-spin-act">Spin Taphadhu (5 Br)</button>
-        </div>
-
-        <!-- CARRAA BILBILOTA MOBAAYILAA -->
-        <div class="card">
-            <div class="card-header"><i class="fa-solid fa-mobile-screen"></i> Carraa Bilbiloota Mobaayilaa</div>
-            <div class="card-desc">Kaffaltii Tikettii: <strong>450 Br</strong> | Lakkoofsa Tikettii: 1 - 3000</div>
-
-            <!-- 1ffaa Top Center -->
-            <div class="phone-top-card">
-                <div style="font-size: 12px; font-weight: 800; color: #fbbf24;">1ffaa Badhaasa Guddaa</div>
-                <img src="https://m.media-amazon.com/images/I/61bK6PMOC3L._AC_SL1500_.jpg" class="phone-top-img" alt="iPhone 17">
-                <div style="font-weight: 800; font-size: 14px;">IPHONE 17 Pro Max</div>
-                <div style="font-size: 11px; color: #8b949e;">Suuraa Fuulduraa fi Duubaa</div>
-            </div>
-
-            <!-- 2ffaa fi 3ffaa Bottom Row -->
-            <div class="phones-bottom-grid">
-                <div class="phone-sub-card">
-                    <div style="font-size: 11px; font-weight: 800; color: #fbbf24;">3ffaa (Bitaa)</div>
-                    <img src="https://m.media-amazon.com/images/I/81c81yC3a+L._AC_SL1500_.jpg" class="phone-sub-img" alt="Samsung A17">
-                    <div style="font-size: 12px; font-weight: 700;">SAMSUNG A17</div>
-                </div>
-                <div class="phone-sub-card">
-                    <div style="font-size: 11px; font-weight: 800; color: #fbbf24;">2ffaa (Mirga)</div>
-                    <img src="https://m.media-amazon.com/images/I/71GLMJ7d29L._AC_SL1500_.jpg" class="phone-sub-img" alt="iPhone 13">
-                    <div style="font-size: 12px; font-weight: 700;">IPHONE 13</div>
-                </div>
-            </div>
-
-            <button class="btn-main" onclick="buyTicketPrompt(450, 3000)" style="margin-top: 12px;">Tikettii Bilbilaa Biti (450 Br)</button>
-        </div>
-
-        <!-- CATEGORIZED TICKETS -->
-        <div class="card">
-            <div class="card-header">Carraa Torbee 1 (Turti: Guyyaa 7)</div>
-            <div class="card-desc">
-                Kaffaltii Tikettii: <strong>200 Br</strong> | Filannoo: 1 - 800<br>
-                1ffaa: 50,000 Br | 2ffaa: 15,000 Br | 3ffaa: 5,000 Br
-            </div>
-            <div class="ticket-list" id="tickets-w1"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">Carraa Torbee 2 (Turti: Guyyaa 15)</div>
-            <div class="card-desc">
-                Kaffaltii Tikettii: <strong>200 Br</strong> | Filannoo: 1 - 1,000<br>
-                1ffaa: 75,000 Br | 2ffaa: 30,000 Br | 3ffaa: 10,000 Br
-            </div>
-            <div class="ticket-list" id="tickets-w2"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">Carraa Ji'a 1 (Turti: Guyyaa 30)</div>
-            <div class="card-desc">
-                Kaffaltii Tikettii: <strong>250 Br</strong> | Filannoo: 1 - 1,000<br>
-                1ffaa: 100,000 Br | 2ffaa: 35,000 Br | 3ffaa: 15,000 Br
-            </div>
-            <div class="ticket-list" id="tickets-m1"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">Carraa Ji'a 2 (Turti: Guyyaa 60)</div>
-            <div class="card-desc">
-                Kaffaltii Tikettii: <strong>300 Br</strong> | Filannoo: 1 - 1,500<br>
-                1ffaa: 150,000 Br | 2ffaa: 50,000 Br | 3ffaa: 25,000 Br
-            </div>
-            <div class="ticket-list" id="tickets-m2"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">Carraa Ji'a 5 (Turti: Guyyaa 150)</div>
-            <div class="card-desc">
-                Kaffaltii Tikettii: <strong>500 Br</strong> | Filannoo: 1 - 2,000<br>
-                1ffaa: 250,000 Br | 2ffaa: 150,000 Br | 3ffaa: 50,000 Br
-            </div>
-            <div class="ticket-list" id="tickets-m5"></div>
-        </div>
-
-    </div>
-
-    <!-- MY TIKET TAB -->
-    <div class="container tab-content" id="tab-tickets">
-        <div class="card">
-            <div class="card-header"><i class="fa-solid fa-ticket"></i> Tikettiwwan Koo</div>
-            <div class="card-desc">Tikettiwwan kaffaltii raawwattanii murattan fi guyyaa itti dhumatu iddoo kana irraa hordofaa.</div>
-            <div id="myTicketsList" style="font-size: 13px; text-align: center; color: #8b949e;">
-                Tikettiin ati bittaatte hin jiru.
-            </div>
-        </div>
-    </div>
-
-    <!-- PROFILE TAB -->
-    <div class="container tab-content" id="tab-profile">
-        <div class="card">
-            <div class="card-header"><i class="fa-solid fa-user-gear"></i> Profile</div>
-            <div style="line-height: 2; font-size: 14px; margin-top: 10px;">
-                <div><strong>Maqaa:</strong> <span id="prof-name">Fayyadamaa</span></div>
-                <div><strong>Mobile:</strong> <span id="prof-phone">Not Set</span></div>
-                <div><strong>Haftee Herregaa:</strong> <span id="prof-bal" style="color: #10b981; font-weight: 800;">0.00</span> Br</div>
-                <hr style="border-color: #30363d; margin: 10px 0;">
-                <div><strong>Official ADMIN:</strong></div>
-                <a href="https://t.me/Ingkings" target="_blank" style="color: #fbbf24; text-decoration: none; font-weight: 800; font-size: 16px;">
-                    <i class="fa-paper-plane"></i> @Ingkings
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM FIXED NAV -->
-    <div class="bottom-bar">
-        <a href="#" class="nav-link active" onclick="switchTab('home', this)">
-            <i class="fa-solid fa-house"></i>
-            <span class="txt-nav-home">HOME</span>
-        </a>
-        <a href="#" class="nav-link" onclick="switchTab('tickets', this)">
-            <i class="fa-solid fa-ticket"></i>
-            <span class="txt-nav-tkt">MY TIKET</span>
-        </a>
-        <a href="#" class="nav-link" onclick="switchTab('profile', this)">
-            <i class="fa-solid fa-user"></i>
-            <span class="txt-nav-prof">PROFILE</span>
-        </a>
-    </div>
-
-    <!-- DEPOSIT MODAL -->
-    <div class="modal" id="depModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('depModal')">&times;</span>
-            <div class="card-header">Deposit / Kaffaltii</div>
-            <div class="bank-info">
-                <strong>CBE BANK ACCOUNT:</strong><br>
-                <code>1000609844292</code><br>
-                <strong>NAME:</strong> GELETA ADEM<br><br>
-                <strong>TELEBIRR NUMBER:</strong><br>
-                <code>+251941470214</code><br>
-                <strong>NAME:</strong> GELETA ADEM
-            </div>
-            <p style="font-size: 11px; color: #8b949e; margin-bottom: 8px;">Kaffaltii raawwattanii suuraa ragaa (Screenshot) upload godhaa. Kaffaltiin 10 Br gadii tasuma hin eeyyamamu.</p>
-            <input type="file" id="depFile" accept="image/*" style="margin-bottom: 10px; font-size: 12px; width: 100%;">
-            <div class="warning-text">Of eeggannoo: Suuraa kaffaltii sobaa upload gochuun akka account'n keessan sa'aatii 5f cufamu taasisa!</div>
-            <button class="btn-main" onclick="submitDeposit()">Ragaa Kaffaltii Ergi</button>
-        </div>
-    </div>
-
-    <!-- WITHDRAW MODAL -->
-    <div class="modal" id="wdModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('wdModal')">&times;</span>
-            <div class="card-header">Withdraw / Maallaqa Baafachuudha</div>
-            <p style="font-size: 12px; color: #8b949e; margin-bottom: 10px;">Maallaqni baafattan daqiiqaa 15 keessatti isin qaqqaba.</p>
-            <select id="wdMethod" style="width: 100%; padding: 10px; background: #0b0e14; color: #fff; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 10px;">
-                <option value="CBE">CBE BANK</option>
-                <option value="TELEBIRR">TELEBIRR</option>
-            </select>
-            <input type="text" id="wdAcc" placeholder="Lakkoofsa Herregaa / Mobile" style="width: 100%; padding: 10px; background: #0b0e14; color: #fff; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 10px;">
-            <input type="number" id="wdAmount" placeholder="Hanga Maallaqaa (Br)" style="width: 100%; padding: 10px; background: #0b0e14; color: #fff; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 10px;">
-            <button class="btn-main" onclick="submitWithdraw()">Maallaqa Baafadhu</button>
-        </div>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        let userBalance = 0.00;
-        let spinCount = 0;
-        let dailyBigWins = { win500: false, win1000: false };
-        let myTickets = [];
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const u = tg.initDataUnsafe.user;
-            document.getElementById('prof-name').innerText = (u.first_name || '') + ' ' + (u.last_name || '');
+        if (progress < duration) {
+          currentAngle += (spinAngle * easeOut * Math.PI / 180) / 20;
+          drawWheel();
+          requestAnimationFrame(animate);
         }
+      }
+      requestAnimationFrame(animate);
+    }
 
-        function updateBalance(amt) {
-            userBalance += amt;
-            document.getElementById('userBalance').innerText = userBalance.toFixed(2);
-            document.getElementById('prof-bal').innerText = userBalance.toFixed(2);
-        }
-
-        function switchTab(tab, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-            el.classList.add('active');
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function playSpin() {
-            if (userBalance < 5) {
-                alert("Spin taphachuuf Haften Herrega keessanii gahaa miti! Maalo dursa Deposit godhaa (Balance > 5 Br ta'uu qaba).");
-                return;
-            }
-
-            updateBalance(-5);
-            spinCount++;
-
-            let prize = 0;
-
-            if (spinCount === 2) {
-                prize = 15;
-            } else if (spinCount === 3) {
-                prize = 10;
-            } else if (spinCount === 20) {
-                prize = 50;
-            } else if (spinCount === 50) {
-                prize = 150;
-            } else {
-                let rand = Math.random();
-                if (rand < 0.001 && !dailyBigWins.win1000) {
-                    prize = 1000;
-                    dailyBigWins.win1000 = true;
-                } else if (rand < 0.003 && !dailyBigWins.win500) {
-                    prize = 500;
-                    dailyBigWins.win500 = true;
-                } else {
-                    const lowRewards = [3, 5, 10, 15, 25];
-                    prize = lowRewards[Math.floor(Math.random() * lowRewards.length)];
-                }
-            }
-
-            updateBalance(prize);
-            alert(`Baga gammaddan! Spin Naannessitanii ${prize} Br Mo'atttaniirtu. Balance keessan irratti ida'ameera!`);
-        }
-
-        function generateTickets(containerId, maxCount, price, durationText) {
-            const container = document.getElementById(containerId);
-            let html = '';
-            for (let i = 1; i <= Math.min(maxCount, 60); i++) {
-                html += `<div class="ticket-item" id="${containerId}-${i}" onclick="buyTicket('${containerId}', ${i}, ${price}, '${durationText}')">${i}_Tiket ◼️</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        function buyTicket(containerId, num, price, durationText) {
-            if (userBalance < price) {
-                alert(`Maalo Tiket murachuuf Haften Herrega keessanii gahaa miti! Herrega Guutun Tiket carraa bitadhaa (Kaffaltii: ${price} Br).`);
-                return;
-            }
-
-            const item = document.getElementById(`${containerId}-${num}`);
-            if (item.classList.contains('taken')) {
-                alert("Maalo lakkoofsi tiket kun durse isin dura filatameera! Maalo lakkoofsa biroo muradhaa.");
-                return;
-            }
-
-            if (confirm(`Lakkoofsa ${num}_Tiket (${price} Br) murachuu ni feetu?`)) {
-                updateBalance(-price);
-                item.innerHTML = `${num}_Tiket ✅`;
-                item.classList.add('taken');
-                
-                let expDate = new Date();
-                myTickets.push({ tnum: num + "_Tiket", price: price, date: expDate.toLocaleDateString(), dur: durationText });
-                renderMyTickets();
-                alert(`Milkaa'inaa! ${num}_Tiket bittaattaniirtu.`);
-            }
-        }
-
-        function buyTicketPrompt(price, maxRange) {
-            if (userBalance < price) {
-                alert(`Maalo Tiket murachuuf Haften Herrega keessanii gahaa miti! Herrega Guutun Tiket carraa bitadhaa (Kaffaltii: ${price} Br).`);
-                return;
-            }
-            let chosen = prompt(`1 - ${maxRange} keessaa lakkoofsa tikettii filadha:`);
-            if (chosen && chosen >= 1 && chosen <= maxRange) {
-                updateBalance(-price);
-                myTickets.push({ tnum: chosen + "_Tiket Bilbilaa", price: price, date: new Date().toLocaleDateString(), dur: 'Carraa Bilbilaa' });
-                renderMyTickets();
-                alert(`Milkaa'inaa! Lakkoofsa ${chosen}_Tiket bitattaniirtu.`);
-            }
-        }
-
-        function renderMyTickets() {
-            const box = document.getElementById('myTicketsList');
-            if (myTickets.length === 0) return;
-            let h = '';
-            myTickets.forEach(t => {
-                h += `<div style="background:#0b0e14; padding:8px; border-radius:8px; margin-bottom:6px; border:1px solid #30363d; text-align:left;">
-                    <span style="color:#fbbf24; font-weight:800;">${t.tnum}</span> | Kaffaltii: ${t.price} Br | Guyyaa Bitame: ${t.date} (${t.dur})
-                </div>`;
-            });
-            box.innerHTML = h;
-        }
-
-        function submitDeposit() {
-            const file = document.getElementById('depFile').files[0];
-            if (!file) {
-                alert("Maalo dursa suuraa ragaa kaffaltii Upload godhaa!");
-                return;
-            }
-            alert("Ragaan Kaffaltii keessani Admin-if ergameera! Verfication booda Herreggi keessan ni guutama.");
-            closeModal('depModal');
-        }
-
-        function submitWithdraw() {
-            const acc = document.getElementById('wdAcc').value;
-            const amt = document.getElementById('wdAmount').value;
-            if (!acc || !amt) {
-                alert("Maalo odeeffannoo guutuu guutaa!");
-                return;
-            }
-            if (amt > userBalance) {
-                alert("Maallaqni baafachuu feetan Herrega qabdan caala!");
-                return;
-            }
-            updateBalance(-amt);
-            alert("Kaffaltiin baafachuu keessan milkaa'eera! Daqiiqaa 15 keessatti isin qaqqaba.");
-            closeModal('wdModal');
-        }
-
-        generateTickets('tickets-w1', 800, 200, 'Torbee 1');
-        generateTickets('tickets-w2', 1000, 200, 'Torbee 2');
-        generateTickets('tickets-m1', 1000, 250, 'Ji\'a 1');
-        generateTickets('tickets-m2', 1500, 300, 'Ji\'a 2');
-        generateTickets('tickets-m5', 2000, 500, 'Ji\'a 5');
-
-        function changeLang() {
-            const lang = document.getElementById('langSelect').value;
-            if (lang === 'am') {
-                document.getElementById('txt-welcome-head').innerText = "እሽክርክሪት በመጫወት አሁኑኑ ሽልማቶችን ያሸንፉ!";
-                document.getElementById('txt-spin-head').innerText = "የዕለቱ ዕድል (Spin)";
-                document.querySelector('.txt-dep').innerText = "ገንዘብ አስገባ";
-                document.querySelector('.txt-wd').innerText = "ገንዘብ ወጣ";
-            } else if (lang === 'en') {
-                document.getElementById('txt-welcome-head').innerText = "Spin the wheel & win big prizes right now!";
-                document.getElementById('txt-spin-head').innerText = "Daily Spin Chance";
-                document.querySelector('.txt-dep').innerText = "Deposit";
-                document.querySelector('.txt-wd').innerText = "Withdraw";
-            } else {
-                document.getElementById('txt-welcome-head').innerText = "Tapha naannessaa taphachuun ammuma badhaasota mo'adha!";
-                document.getElementById('txt-spin-head').innerText = "Carraa Guyyaa (Spin)";
-                document.querySelector('.txt-dep').innerText = "Deposit";
-                document.querySelector('.txt-wd').innerText = "Withdraw";
-            }
-        }
-    </script>
+    // Init
+    drawWheel();
+    generateGrids();
+  </script>
 </body>
 </html>
+
