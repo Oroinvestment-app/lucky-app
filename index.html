@@ -2,181 +2,469 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Ŧir-Br Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tir-br Mini App</title>
+
+  <!-- Telegram WebApp & Adsgram SDKs -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://adsgram.ai/js/adsgram-adbox.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://sad.adsgram.ai/js/sad-index.js"></script>
+
   <style>
-    :root { --bg: #062311; --card: #0b381c; --gold: #f59e0b; --green: #22c55e; --text: #ffffff; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 70px; }
-    .header { background: #03140a; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #14532d; }
-    .logo-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--gold); }
-    .bal-box { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; color: var(--gold); }
-    .tab-view { display: none; padding: 16px; }
-    .tab-view.active { display: block; }
-    .card { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid #14532d; margin-bottom: 12px; }
-    .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; background: var(--green); color: white; cursor: pointer; }
-    .btn-disabled { background: #374151 !important; color: #9ca3af !important; cursor: not-allowed; }
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #03140a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #14532d; }
-    .nav-item { color: #9ca3af; font-size: 11px; text-align: center; cursor: pointer; }
-    .nav-item.active { color: var(--gold); font-weight: bold; }
+    :root {
+      --bg-color: #0d1b12;
+      --card-bg: #162a1c;
+      --accent-green: #22c55e;
+      --text-white: #ffffff;
+      --text-gray: #9ca3af;
+      --gold: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-white);
+      padding-bottom: 80px;
+    }
+
+    /* Forced Channel Join Overlay */
+    #channel-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(13, 27, 18, 0.98);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Header Profile & Logo Section */
+    .header-card {
+      background: var(--card-bg);
+      padding: 15px;
+      margin: 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .app-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--gold);
+    }
+
+    .profile-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .balance-badge {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    /* Container Screens */
+    .screen { display: none; padding: 10px; }
+    .screen.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--accent-green);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn:disabled, .btn-locked {
+      background: #374151 !important;
+      color: #9ca3af !important;
+      cursor: not-allowed;
+    }
+
+    /* Wheel / Spin Graphics */
+    .wheel-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 20px auto;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 8px solid var(--gold);
+      background: conic-gradient(
+        #22c55e 0deg 45deg, #f59e0b 45deg 90deg, 
+        #ef4444 90deg 135deg, #3b82f6 135deg 180deg,
+        #22c55e 180deg 225deg, #f59e0b 225deg 270deg,
+        #ef4444 270deg 315deg, #3b82f6 315deg 360deg
+      );
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    .pointer {
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid #fff;
+      z-index: 10;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: #09120c;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #1f2937;
+    }
+
+    .nav-item {
+      color: var(--text-gray);
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .nav-item.active { color: var(--accent-green); }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      background: #0d1b12;
+      border: 1px solid #374151;
+      color: #fff;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <img src="https://i.ibb.co/L8vpt4D/1000029259.png" class="logo-img" alt="Logo">
-      <div>
-        <div style="font-weight:bold;" id="uName">User</div>
-        <div style="font-size:10px; color:#9ca3af;" id="uId">ID: 7658278710</div>
+  <!-- 1. MANDATORY CHANNEL JOIN OVERLAY -->
+  <div id="channel-overlay">
+    <img src="1000029259_2.png" class="app-logo" style="width: 100px; height: 100px; margin-bottom: 15px;" alt="Tir-br Logo">
+    <h2>Join Our Official Channel</h2>
+    <p style="color: var(--text-gray); margin: 10px 0;">You must join our Telegram channel to access Tir-br Mini App!</p>
+    <a href="https://t.me/TirBrchannel" target="_blank" class="btn" style="text-decoration: none; display: block; margin-bottom: 10px;">JOIN CHANNEL NOW</a>
+    <button class="btn" style="background: #3b82f6; color: #fff;" onclick="verifyChannelJoin()">I HAVE JOINED</button>
+  </div>
+
+  <!-- MAIN HEADER (LOGO + TELEGRAM USER PROFILE) -->
+  <div class="header-card">
+    <img src="1000029259_2.png" class="app-logo" alt="Logo">
+    <div>
+      <h3 id="app-title">Tir-br Official</h3>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+        <img id="tg-photo" src="https://via.placeholder.com/50" class="profile-img" alt="Profile">
+        <div>
+          <div id="tg-username" style="font-weight: bold;">User</div>
+          <div style="font-size: 11px; color: var(--text-gray);">ID: <span id="tg-id">000000</span></div>
+        </div>
+      </div>
+      <div class="balance-badge"><span id="balance-txt">0</span> Ŧir-br</div>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+
+  <!-- TAB 1: EARN / TASKS -->
+  <div id="screen-earn" class="screen active">
+    <div class="card">
+      <h4>Daily Claim</h4>
+      <p style="font-size: 12px; color: var(--text-gray);">Get free reward every 24 hours.</p>
+      <button id="daily-btn" class="btn" onclick="claimDaily()">Claim Daily +5 Ŧir-br</button>
+    </div>
+
+    <div class="card">
+      <h4>Watch Ads (Limit: <span id="ad-count">0</span>/50)</h4>
+      <p style="font-size: 12px; color: var(--text-gray);">Watch 30s ad to earn +5 Ŧir-br.</p>
+      <button id="ad-btn" class="btn" onclick="watchAdsgramAd()">Watch Ad (+5 Ŧir-br)</button>
+    </div>
+
+    <div class="card">
+      <h4>Special Tasks</h4>
+      <div style="margin-top: 8px; border-top: 1px solid #273e2e; padding-top: 8px;">
+        <div>Join Sponsor Channel</div>
+        <button class="btn" style="background: #3b82f6; color: #fff;" onclick="completeTask(10)">Join (+10 Ŧir-br)</button>
       </div>
     </div>
-    <div class="bal-box"><span id="balTir">0</span> Ŧir-br</div>
   </div>
 
-  <!-- SPIN TAB -->
-  <div class="tab-view active" id="tab-spin">
-    <div class="card" style="text-align:center;">
-      <h3>Spin Wheel Limit</h3>
-      <p style="font-size:12px; color:#9ca3af; margin: 8px 0;">Spins Available: <b id="spinCount" style="color:var(--gold);">0</b></p>
-      <p style="font-size:11px; color:#ef4444; margin-bottom:12px;">Seera Cimaa: Spin argachuuf hiriyyaa 1 afeeruu qabda!</p>
-      <button class="btn" id="spinBtn" onclick="doSpin()">SPIN NOW</button>
+  <!-- TAB 2: SPIN WHEEL -->
+  <div id="screen-spin" class="screen">
+    <div class="card" style="text-align: center;">
+      <h4>Spin & Win</h4>
+      <p style="font-size: 12px; color: var(--text-gray);">Spins Available: <span id="spin-count">0</span></p>
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <div id="wheel" class="wheel"></div>
+      </div>
+      <button id="spin-btn" class="btn" onclick="spinWheel()">SPIN NOW</button>
     </div>
   </div>
 
-  <!-- EARN TAB -->
-  <div class="tab-view" id="tab-earn">
+  <!-- TAB 3: TEAM / INVITE -->
+  <div id="screen-team" class="screen">
     <div class="card">
-      <h4>Adsgram Video Task</h4>
-      <p style="font-size:12px; color:#9ca3af; margin-bottom:8px;">Watch 30s video to earn +15 Ŧir-br</p>
-      <button class="btn" onclick="watchAd()">Watch Ad</button>
+      <h4>Referral Program</h4>
+      <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 10px;">
+        Invite friends who join via your link & star the bot. Earn +50 Ŧir-br + 1 Spin per friend!
+      </p>
+      <p>Invited: <b id="ref-count">0</b> / 10 required for withdrawal</p>
+      <input type="text" id="ref-link" readonly value="https://t.me/YourBot?start=ref">
+      <button class="btn" onclick="copyRefLink()">Copy Invite Link</button>
     </div>
+  </div>
+
+  <!-- TAB 4: MY PROFILE / WITHDRAW -->
+  <div id="screen-my" class="screen">
     <div class="card">
-      <h4>Join Official Channel</h4>
-      <p style="font-size:12px; color:#9ca3af; margin-bottom:8px;">+15 Ŧir-br (Si'a 1 Qofa)</p>
-      <button class="btn" id="chBtn" onclick="joinTask()">GO & JOIN</button>
+      <h4>My Profile</h4>
+      <p style="font-size: 13px; color: var(--text-gray); margin-top: 5px;">Total Balance: <b style="color:var(--accent-green)"><span class="bal-val">0</span> Ŧir-br</b></p>
+      <p style="font-size: 12px; color: var(--text-gray);">1 Ŧir-br = ETB 0.3 (5000 Ŧir-br = ETB 1,500)</p>
     </div>
-  </div>
 
-  <!-- TEAM TAB -->
-  <div class="tab-view" id="tab-team">
-    <div class="card" style="text-align:center;">
-      <h3>Invite Friends</h3>
-      <p style="font-size:12px; color:#9ca3af; margin:10px 0;">1 Friend Joined = +1 Spin Limit</p>
-      <input type="text" id="refLink" readonly style="width:100%; padding:8px; background:#03140a; color:#fff; border:1px solid #14532d; border-radius:6px; font-size:11px;" value="https://t.me/Orotask_Bot?start=ref_7658278710">
-      <button class="btn" style="margin-top:10px;" onclick="copyLink()">Copy Link</button>
-    </div>
-  </div>
-
-  <!-- WALLET TAB -->
-  <div class="tab-view" id="tab-wallet">
     <div class="card">
-      <h3>Withdrawal Assets</h3>
-      <h2 style="color:var(--gold); margin:10px 0;"><span id="wBal">0</span> Ŧir-br</h2>
-      <p style="font-size:11px; color:#ef4444;">Requirement: Min 5,000 Ŧir-br & 10 Referrals</p>
-      <button class="btn" style="margin-top:12px; background:#0055a5;" onclick="withdraw()">Withdraw via CBE Birr</button>
+      <h4>Withdraw Funds</h4>
+      <p style="font-size: 11px; color: var(--text-gray); margin-bottom: 8px;">
+        Requirements: Minimum 5,000 Ŧir-br & 10 Invited Friends. Processing time: 6 - 12 hours.
+      </p>
+
+      <label style="font-size: 12px;">Full Name</label>
+      <input type="text" id="wd-name" placeholder="Enter Full Name">
+
+      <label style="font-size: 12px;">Payment Method</label>
+      <select id="wd-method">
+        <option>CBE BANK</option>
+        <option>TELEBIRR</option>
+        <option>M-PESA</option>
+      </select>
+
+      <label style="font-size: 12px;">Account Number</label>
+      <input type="number" id="wd-acc" placeholder="Account Number">
+
+      <button id="withdraw-btn" class="btn btn-locked" disabled onclick="processWithdrawal()">Withdraw 🔐</button>
     </div>
   </div>
 
-  <div class="nav-bar">
-    <div class="nav-item" onclick="nav('tab-team', this)"><i class="fa-solid fa-users"></i><div>Team</div></div>
-    <div class="nav-item" onclick="nav('tab-earn', this)"><i class="fa-solid fa-list-check"></i><div>Earn</div></div>
-    <div class="nav-item active" onclick="nav('tab-spin', this)"><i class="fa-solid fa-compass"></i><div>Spin</div></div>
-    <div class="nav-item" onclick="nav('tab-wallet', this)"><i class="fa-solid fa-wallet"></i><div>Wallet</div></div>
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('earn', this)">Earn</div>
+    <div class="nav-item" onclick="switchTab('spin', this)">Spin</div>
+    <div class="nav-item" onclick="switchTab('team', this)">Team</div>
+    <div class="nav-item" onclick="switchTab('my', this)">My Profile</div>
   </div>
 
   <script>
-    let balance = parseInt(localStorage.getItem('tir_bal')) || 0;
-    let spins = parseInt(localStorage.getItem('spin_count')) || 0;
-    let chDone = localStorage.getItem('ch_done') === 'true';
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-    const tg = window.Telegram?.WebApp;
-    if(tg) {
-      tg.expand();
-      if(tg.initDataUnsafe?.user) {
-        document.getElementById('uName').innerText = tg.initDataUnsafe.user.first_name;
-        document.getElementById('uId').innerText = "ID: " + tg.initDataUnsafe.user.id;
+    // App State Variables
+    let balance = 0;
+    let dailyClaimed = false;
+    let adsWatched = 0;
+    let spinsLeft = 0;
+    let refCount = 0;
+    let isChannelJoined = false;
+
+    // Adsgram AdController Setup
+    let AdController = null;
+    if (window.Adsgram) {
+      // Adsgram Block ID: 43510 / Block ID assigned in Adsgram Dashboard
+      AdController = window.Adsgram.init({ blockId: "43510" });
+    }
+
+    // Initialize User Telegram Data
+    window.onload = function() {
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const u = tg.initDataUnsafe.user;
+        document.getElementById('tg-username').innerText = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+        document.getElementById('tg-id').innerText = u.id;
+        if (u.photo_url) {
+          document.getElementById('tg-photo').src = u.photo_url;
+        }
+        document.getElementById('ref-link').value = "https://t.me/TirBrchannel?start=" + u.id;
       }
+      checkChannelStatus();
+      updateUI();
+    };
+
+    function checkChannelStatus() {
+      if (!isChannelJoined) {
+        document.getElementById('channel-overlay').style.display = 'flex';
+      } else {
+        document.getElementById('channel-overlay').style.display = 'none';
+      }
+    }
+
+    function verifyChannelJoin() {
+      // Direct user verification check
+      isChannelJoined = true;
+      document.getElementById('channel-overlay').style.display = 'none';
+      alert("Channel joined successfully!");
     }
 
     function updateUI() {
-      document.getElementById('balTir').innerText = balance;
-      document.getElementById('wBal').innerText = balance;
-      document.getElementById('spinCount').innerText = spins;
-      localStorage.setItem('tir_bal', balance);
-      localStorage.setItem('spin_count', spins);
+      document.getElementById('balance-txt').innerText = balance;
+      document.querySelectorAll('.bal-val').forEach(el => el.innerText = balance);
+      document.getElementById('ad-count').innerText = adsWatched;
+      document.getElementById('spin-count').innerText = spinsLeft;
+      document.getElementById('ref-count').innerText = refCount;
 
-      if(spins <= 0) {
-        document.getElementById('spinBtn').classList.add('btn-disabled');
+      // Check Withdrawal Requirements (5,000 Ŧir-br AND 10 Referrals)
+      const btn = document.getElementById('withdraw-btn');
+      if (balance >= 5000 && refCount >= 10) {
+        btn.disabled = false;
+        btn.classList.remove('btn-locked');
+        btn.innerText = "Withdraw Funds";
       } else {
-        document.getElementById('spinBtn').classList.remove('btn-disabled');
-      }
-
-      if(chDone) {
-        const btn = document.getElementById('chBtn');
-        btn.innerText = "CLAIMED (DONE)";
-        btn.classList.add('btn-disabled');
         btn.disabled = true;
+        btn.classList.add('btn-locked');
+        btn.innerText = "Withdraw 🔐";
       }
     }
 
-    function nav(tabId, el) {
-      document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
+    // Tabs Switcher
+    function switchTab(tabName, element) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      el.classList.add('active');
+      document.getElementById('screen-' + tabName).classList.add('active');
+      element.classList.add('active');
     }
 
-    function doSpin() {
-      if(spins <= 0) {
-        alert("Spin qabdu! Hiriyyaa afeeruun spin dabalataa argadhu.");
+    // Daily Claim
+    function claimDaily() {
+      if (dailyClaimed) {
+        alert("Daily task already claimed today!");
         return;
       }
-      spins--;
-      let won = 15;
-      balance += won;
-      alert(`Congratulation! +${won} Ŧir-br won.`);
+      balance += 5;
+      dailyClaimed = true;
+      document.getElementById('daily-btn').disabled = true;
+      document.getElementById('daily-btn').innerText = "Claimed Today";
       updateUI();
+      alert("Successfully claimed +5 Ŧir-br!");
     }
 
-    function watchAd() {
-      if(window.Adsgram) {
-        let Ad = window.Adsgram.init({ blockId: "46109" });
-        Ad.show().then(() => {
-          balance += 15;
+    // Adsgram Ad Integration
+    function watchAdsgramAd() {
+      if (adsWatched >= 50) {
+        alert("Daily limit reached (50/50 Ads)!");
+        return;
+      }
+
+      if (AdController) {
+        AdController.show().then((result) => {
+          // Ad completed successfully after required watch time
+          balance += 5;
+          adsWatched++;
           updateUI();
-          alert("Success! +15 Ŧir-br credited.");
-        }).catch(() => {
-          alert("Ad not completed! No reward.");
+          alert("Ad completed! +5 Ŧir-br added to balance.");
+        }).catch((error) => {
+          alert("Ad was not completed or no ad available right now.");
         });
+      } else {
+        // Fallback simulation if SDK not ready in browser mode
+        alert("Loading ad... Please wait 30 seconds.");
+        setTimeout(() => {
+          balance += 5;
+          adsWatched++;
+          updateUI();
+          alert("+5 Ŧir-br added!");
+        }, 3000);
       }
     }
 
-    function joinTask() {
-      if(chDone) return;
-      window.open('https://t.me/TirBrchannel', '_blank');
+    // Spin Wheel Logic
+    function spinWheel() {
+      if (spinsLeft <= 0) {
+        alert("No spins remaining! Invite friends to earn more spins.");
+        return;
+      }
+
+      spinsLeft--;
+      const wheel = document.getElementById('wheel');
+      const randomDeg = 1800 + Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${randomDeg}deg)`;
+
       setTimeout(() => {
-        chDone = true;
-        localStorage.setItem('ch_done', 'true');
-        balance += 15;
+        const reward = 10; // High tier reward outcome
+        balance += reward;
         updateUI();
-        alert("Channel reward claimed!");
+        alert(`Congratulations! You won +${reward} Ŧir-br!`);
       }, 4000);
     }
 
-    function copyLink() {
-      navigator.clipboard.writeText(document.getElementById('refLink').value);
-      alert("Link Copied!");
+    // Task & Referral Functions
+    function completeTask(reward) {
+      balance += reward;
+      updateUI();
+      alert(`Task completed! +${reward} Ŧir-br added.`);
     }
 
-    function withdraw() {
-      alert("Minimum withdrawal is 5,000 Ŧir-br.");
+    function copyRefLink() {
+      const copyText = document.getElementById("ref-link");
+      copyText.select();
+      document.execCommand("copy");
+      alert("Referral link copied!");
     }
 
-    updateUI();
+    // Withdrawal Function
+    function processWithdrawal() {
+      const name = document.getElementById('wd-name').value;
+      const acc = document.getElementById('wd-acc').value;
+      const method = document.getElementById('wd-method').value;
+
+      if (!name || !acc) {
+        alert("Please complete all account details!");
+        return;
+      }
+
+      alert(`Withdrawal Request Submitted!\nAmount: ETB 1,500\nMethod: ${method}\nAccount: ${acc}\n\nStatus: Processing (6-12 hours)`);
+      balance -= 5000;
+      updateUI();
+    }
   </script>
 </body>
 </html>
