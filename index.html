@@ -1,693 +1,846 @@
 <!DOCTYPE html>
-<html lang="om">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWARDS Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tir-Br Telegram Mini App</title>
+  
+  <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Adsgram SDK -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <!-- Canvas Confetti Library for Spin / Claim Effects -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
   <style>
-    * { box-sizing: border-box; }
-    body { background-color: #0b0f19; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 10px; padding-bottom: 80px; }
-    
-    /* Winner Broadcast Toast */
-    .winner-toast {
-      position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(90deg, #ef4444, #f59e0b); color: #fff;
-      padding: 8px 14px; border-radius: 20px; font-weight: bold; font-size: 11px;
-      z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: none;
-      text-align: center; width: 92%; max-width: 420px; border: 1px solid #fcf4a3;
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-color: #38bdf8;
+      --gold-color: #f59e0b;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --border-radius: 16px;
     }
 
-    /* Top Header */
-    .header { display: flex; justify-content: space-between; align-items: center; background: #111827; padding: 12px; border-radius: 10px; border: 1px solid #1f2937; flex-wrap: wrap; gap: 6px; margin-top: 35px; }
-    .brand { font-size: 18px; font-weight: bold; color: #f59e0b; display: flex; align-items: center; gap: 5px; }
-    .btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-    .btn-deposit { background: #22c55e; color: #fff; }
-    .btn-withdraw { background: #ef4444; color: #fff; }
-    .balance-box { background: #1f2937; padding: 6px 10px; border-radius: 6px; font-weight: bold; color: #f59e0b; border: 1px solid #374151; font-size: 12px;}
-    .lang-select { background: #1f2937; color: #fff; border: 1px solid #374151; padding: 6px; border-radius: 6px; font-size: 12px; }
-
-    /* Cards & Containers */
-    .banner-card { background: #111827; border: 1px solid #f59e0b; border-radius: 10px; padding: 15px; text-align: center; margin-top: 12px; }
-    .banner-title { color: #f59e0b; font-weight: bold; margin-bottom: 5px; font-size: 14px; text-transform: uppercase; }
-    .banner-sub { color: #9ca3af; font-size: 12px; }
-
-    .notice-card { background: #1c0d0f; border: 1px solid #991b1b; border-radius: 10px; padding: 12px; margin-top: 12px; font-size: 12px; line-height: 1.6; }
-    .notice-title { color: #ef4444; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-align: center; }
-
-    .card { background: #111827; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #1f2937; }
-    .highlight-box { border: 2px solid #38bdf8; border-radius: 8px; padding: 10px; background: rgba(56, 189, 248, 0.05); margin-bottom: 12px; }
-    .card-header-title { font-size: 13px; font-weight: bold; color: #38bdf8; margin-bottom: 6px; text-transform: uppercase; }
-    .card-info { font-size: 12px; color: #cbd5e1; line-height: 1.5; }
-
-    /* REALISTIC HD SMARTPHONE ARTWORK */
-    .phone-podium { display: flex; justify-content: space-between; align-items: flex-end; margin: 15px 0; gap: 8px; }
-    .phone-item { background: #1f2937; border-radius: 12px; padding: 10px; text-align: center; flex: 1; border: 1px solid #374151; }
-    .phone-item.first { border: 2px solid #f59e0b; background: linear-gradient(180deg, #2a2010, #1f2937); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
-    .phone-rank { font-weight: bold; font-size: 12px; margin-bottom: 6px; }
-    .phone-rank.r1 { color: #f59e0b; } .phone-rank.r2 { color: #94a3b8; } .phone-rank.r3 { color: #b45309; }
-
-    /* Phone Body Real Mockup */
-    .mock-phone {
-      width: 70px; height: 130px; margin: 8px auto; border-radius: 16px;
-      position: relative; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.8);
-      border: 3px solid #4b5563; background: #000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 4px;
-    }
-    .mock-phone.iphone-gold {
-      border: 3px solid #f59e0b; width: 78px; height: 145px;
-      background: linear-gradient(135deg, #1e1b4b, #311b92, #000);
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
-    }
-    .mock-phone.iphone-dark {
-      background: linear-gradient(135deg, #0f172a, #1e293b); border-color: #64748b;
-    }
-    .mock-phone.samsung-blue {
-      background: linear-gradient(135deg, #0284c7, #0f172a); border-color: #38bdf8;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
     }
 
-    /* Screen Elements */
-    .phone-island { width: 22px; height: 6px; background: #000; border-radius: 10px; margin-top: 2px; border: 1px solid rgba(255,255,255,0.2); }
-    .phone-wallpaper {
-      width: 100%; height: 82%; border-radius: 10px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; position: relative; overflow: hidden;
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-bottom: 80px;
     }
-    .wp-icon { font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
-    .wp-text { font-size: 9px; font-weight: bold; color: #fff; text-shadow: 0 2px 4px #000; margin-top: 4px; }
-    .phone-home-bar { width: 25px; height: 3px; background: #ffffff; border-radius: 2px; margin-bottom: 2px; opacity: 0.8; }
 
-    /* Ticket Grid */
-    .ticket-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; max-height: 250px; overflow-y: auto; }
-    .ticket-btn { background: #1f2937; color: #fff; padding: 8px 4px; border: 1px solid #374151; border-radius: 6px; cursor: pointer; font-size: 11px; text-align: center; width: 100%; }
-    .ticket-btn.booked { background: #450a0a; border-color: #991b1b; color: #f87171; cursor: not-allowed; }
+    /* Container & Screens */
+    .app-container {
+      flex: 1;
+      padding: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
 
-    /* Real Wheel Canvas UI */
-    .wheel-wrapper { position: relative; width: 250px; height: 250px; margin: 20px auto; }
+    .screen {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header & Logo */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid var(--gold-color);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--gold-color);
+      text-transform: uppercase;
+    }
+
+    .bot-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Balance Card */
+    .balance-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .balance-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .balance-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--gold-color);
+      margin: 8px 0;
+    }
+
+    .balance-equivalent {
+      font-size: 13px;
+      color: var(--accent-color);
+    }
+
+    /* Cards & Modules */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #0f172a;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #0f172a;
+    }
+
+    .btn-disabled {
+      background: #334155 !important;
+      color: #64748b !important;
+      cursor: not-allowed !important;
+      opacity: 0.7;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background-color: #1e293b;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-decoration: none;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item.active {
+      color: var(--gold-color);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    /* Forced Join Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(15, 23, 42, 0.95);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      border: 2px solid var(--gold-color);
+      padding: 24px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    /* Task Item */
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-info h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .task-info p {
+      font-size: 12px;
+      color: var(--gold-color);
+    }
+
+    .task-btn {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    /* Spin Wheel Container */
+    .wheel-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 20px auto;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 8px solid var(--gold-color);
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 1);
+      background: conic-gradient(
+        #f59e0b 0deg 60deg,
+        #1e293b 60deg 120deg,
+        #38bdf8 120deg 180deg,
+        #8b5cf6 180deg 240deg,
+        #ec4899 240deg 300deg,
+        #22c55e 300deg 360deg
+      );
+    }
+
     .wheel-pointer {
-      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
-      border-top: 24px solid #ef4444; z-index: 100; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 25px solid var(--danger-color);
+      z-index: 10;
     }
-    #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #f59e0b; transition: transform 3s cubic-bezier(0.15, 0.9, 0.15, 1); }
 
-    /* Navigation */
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #0b0f19; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #1f2937; z-index: 100; }
-    .nav-item { color: #6b7280; text-decoration: none; font-size: 10px; text-align: center; cursor: pointer; flex: 1; }
-    .nav-item.active { color: #f59e0b; font-weight: bold; }
-    
-    .page { display: none; }
-    .page.active { display: block; }
+    /* Inputs */
+    .input-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
 
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background: #111827; border: 1px solid #f59e0b; border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; }
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background-color: #0f172a;
+      color: white;
+      font-size: 14px;
+    }
+
+    .profile-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      background-color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* Banner Ad Simulation */
+    .screen-banner {
+      width: 100%;
+      height: 60px;
+      background-color: #334155;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border: 1px dashed var(--gold-color);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Toast Broadcast for Winners -->
-  <div id="winner-toast" class="winner-toast"></div>
-
-  <!-- Top Header Bar -->
-  <div class="header">
-    <div class="brand">🏆 AWARDS</div>
-    <button class="btn btn-deposit" onclick="openModal('deposit-modal')">Deposit</button>
-    <button class="btn btn-withdraw" onclick="openModal('withdraw-modal')">Withdraw</button>
-    <div class="balance-box"><span id="user-balance">0.00</span> Br</div>
-    <select class="lang-select" id="lang-switcher" onchange="changeLanguage(this.value)">
-      <option value="om">Oromo</option>
-      <option value="en">English</option>
-      <option value="am">አማርኛ</option>
-    </select>
+  <!-- MANDATORY CHANNEL JOIN MODAL -->
+  <div id="joinModal" class="modal-overlay">
+    <div class="modal-content">
+      <img src="https://raw.githubusercontent.com/telegram/prompt-assets/main/bot-avatar.png" alt="Tir-Br Logo" class="brand-logo" id="modalLogo">
+      <h2 style="color: var(--gold-color); margin-bottom: 10px;">Join Official Channel</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+        To unlock all features and start earning <strong>Tir-br</strong>, you must join our official Telegram channel first!
+      </p>
+      <a href="https://t.me/TirBrchannel" target="_blank" class="btn btn-primary" onclick="markChannelClicked()" style="text-decoration: none; margin-bottom: 12px;">
+        📢 Join Channel Now
+      </a>
+      <button class="btn btn-accent" onclick="verifyChannelJoin()">
+        ✅ I Have Joined
+      </button>
+    </div>
   </div>
 
-  <!-- HOME PAGE -->
-  <div id="page-home" class="page active">
-    <div class="banner-card">
-      <div class="banner-title" id="t-welcome-title">TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!</div>
-      <div class="banner-sub" id="t-welcome-sub">Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.</div>
+  <div class="app-container">
+
+    <!-- BRANDING HEADER -->
+    <div class="brand-header">
+      <img src="https://raw.githubusercontent.com/telegram/prompt-assets/main/bot-avatar.png" alt="Tir-Br Logo" class="brand-logo" id="mainLogo">
+      <div class="brand-title">Tir-Br</div>
+      <div class="bot-subtitle">@Orotask_Bot</div>
     </div>
 
-    <div class="notice-card">
-      <div class="notice-title" id="t-rules-head">⚠️ ULAAGAFII SEERA APPICHA ⚠️</div>
-      <div id="t-rules-body">
-        1. Namni/qaamni kamiyyuu osoo Deposit hin raawwatin Ticket filachuufi Spin naannessu hin danda'u.<br>
-        2. Carraa Spin ykn Ticket yoo moo'attan battalumatti maallaqni gara Balance keessanitti dabalama.<br>
-        3. Spin naannessuuf ykn Ticket murachuuf Balance keessan 5 Br ol ta'uu qaba.<br>
-        4. Fayyadamaan rakkoo mudate Keessummessitootatti iyyachuu mirga qaba.<br>
-        5. Ticket murateef badhaasni kan qaqqabu yoo abbaa carraa ta'e malee!<br>
-        6. Walitti aansee Ticket 1-5 bitachuu mirga guutu qaba.<br>
-        7. Adeemsi maallaqa baasuu sa'aatii 6-15 fudhachuu danda'a.<br>
-        8. Carraa bilbiloota yoo moo'atan bilbila argachuuf mirga guutuu qabdu.<br>
-        9. Bilbila moo'atan bakka bilbilaa maallaqa fudhachuun Admin dubbisuun ni danda'ama.<br>
-        10. ⚠️ Kafaltii sobaa ykn Ticket sobaa yoo bitatan battalumatti sa'aatii 5f akka Scam ugguramtu!⚠️
+    <!-- BALANCE OVERVIEW -->
+    <div class="balance-card">
+      <div class="balance-title">Your Total Balance</div>
+      <div class="balance-value" id="balanceDisplay">0.00 Tir-br</div>
+      <div class="balance-equivalent" id="birrDisplay">≈ 0.00 ETB</div>
+    </div>
+
+    <!-- TAB 1: HOME (ADS & DAILY TASK) -->
+    <div id="homeScreen" class="screen active">
+      <div class="card">
+        <div class="card-title">
+          <span>📅 Daily Check-in</span>
+          <span style="color: var(--gold-color); font-size: 13px;">+5 Tir-br</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Claim your free daily reward once every 24 hours.</p>
+        <button id="dailyBtn" class="btn btn-accent" onclick="claimDailyReward()">Claim Daily Reward</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📺 Watch Ads & Earn</span>
+          <span style="color: var(--gold-color); font-size: 13px;" id="adCounter">0 / 50 Today</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Watch a full 30-second ad to earn <strong>5 Tir-br</strong>. Maximum 50 ads per day.
+        </p>
+        <button id="watchAdBtn" class="btn btn-primary" onclick="watchAdsgramAd()">
+          ▶️ Watch Video Ad (+5 Tir-br)
+        </button>
+      </div>
+
+      <div class="screen-banner">
+        <span>⚡ Adsgram Banner Space (5 Seconds Auto-Refresh)</span>
       </div>
     </div>
 
-    <!-- Phones Showcase HD Realistic Design -->
-    <div class="card">
-      <div class="card-header-title" id="t-phone-title">📱 CARRAA BILBILOOTA MOBAAYILAA (Kaffaltii: 450 Br)</div>
-      <div style="font-size: 11px; color: #9ca3af;" id="t-phone-sub">Lakkoofsa Ticket: 1-3000</div>
-      
-      <div class="phone-podium">
+    <!-- TAB 2: TASKS -->
+    <div id="tasksScreen" class="screen">
+      <div class="card">
+        <div class="card-title">Available Micro-Tasks</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Complete task instructions to earn extra Tir-br tokens.</p>
         
-        <!-- 2nd Place: iPhone 13 -->
-        <div class="phone-item">
-          <div class="phone-rank r2">2ffaa</div>
-          <div class="mock-phone iphone-dark">
-            <div class="phone-island"></div>
-            <div class="phone-wallpaper">
-              <span class="wp-icon">📱</span>
-              <span class="wp-text">iOS 17</span>
-            </div>
-            <div class="phone-home-bar"></div>
+        <div id="taskList">
+          <!-- Dynamic tasks rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SPIN WHEEL -->
+    <div id="spinScreen" class="screen">
+      <div class="card" style="text-align: center;">
+        <div class="card-title" style="justify-content: center;">🎡 Lucky Wheel</div>
+        <p style="font-size: 12px; color: var(--text-muted);">Spin to win up to 50 Tir-br daily!</p>
+
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <div class="wheel" id="wheel"></div>
+        </div>
+
+        <button id="spinBtn" class="btn btn-primary" onclick="spinWheel()">Spin Wheel Now</button>
+      </div>
+    </div>
+
+    <!-- TAB 4: INVITE / REFERRALS -->
+    <div id="inviteScreen" class="screen">
+      <div class="card">
+        <div class="card-title">👥 Referral Program</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Invite friends using your unique link. Earn <strong>50 Tir-br</strong> for every friend who joins!
+        </p>
+
+        <div style="background-color: #0f172a; padding: 12px; border-radius: 8px; font-size: 12px; word-break: break-all; margin-bottom: 12px; text-align: center; border: 1px dashed var(--gold-color);" id="refLinkDisplay">
+          https://t.me/Orotask_Bot?start=ref_123456
+        </div>
+
+        <button class="btn btn-accent" onclick="copyReferralLink()">📋 Copy Referral Link</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Withdrawal Progress</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+          Requirement: Invite at least 10 active friends.
+        </p>
+        <div style="font-size: 20px; font-weight: 800; color: var(--gold-color); text-align: center; margin: 10px 0;" id="refCountDisplay">
+          0 / 10 Friends Joined
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: PROFILE & WITHDRAW -->
+    <div id="profileScreen" class="screen">
+      <div class="card" style="text-align: center;">
+        <div class="profile-avatar" id="userAvatar">U</div>
+        <h3 id="userNameDisplay">Telegram User</h3>
+        <p style="font-size: 12px; color: var(--text-muted);" id="userIdDisplay">ID: 00000000</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💳 Withdraw Funds</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Minimum Balance: <strong>5,000 Tir-br (= ETB 1,500)</strong><br>
+          Requirement: Must have invited 10 active friends.
+        </p>
+
+        <form id="withdrawForm" onsubmit="handleWithdraw(event)">
+          <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" class="input-control" id="withdrawName" placeholder="Enter your full legal name" required>
           </div>
-          <div style="font-size: 11px; font-weight: bold; color: #cbd5e1;">iPhone 13</div>
-        </div>
 
-        <!-- 1st Place: iPhone 17 Pro (Featured HD Gold) -->
-        <div class="phone-item first">
-          <div class="phone-rank r1">👑 1ffaa</div>
-          <div class="mock-phone iphone-gold">
-            <div class="phone-island" style="width: 26px; background: #000; border-color: #f59e0b;"></div>
-            <div class="phone-wallpaper">
-              <span class="wp-icon" style="font-size: 34px;">📱✨</span>
-              <span class="wp-text" style="color: #f59e0b; font-size: 10px;">17 PRO MAX</span>
-            </div>
-            <div class="phone-home-bar" style="background: #f59e0b;"></div>
+          <div class="input-group">
+            <label>Payment Method</label>
+            <select class="input-control" id="withdrawMethod" required>
+              <option value="CBE BANK">1. CBE Bank</option>
+              <option value="TELEBIRR">2. Telebirr</option>
+              <option value="M-PESA">3. M-Pesa</option>
+            </select>
           </div>
-          <div style="font-size: 12px; font-weight: bold; color: #f59e0b;">iPhone 17 Pro</div>
-        </div>
 
-        <!-- 3rd Place: Samsung A17 -->
-        <div class="phone-item">
-          <div class="phone-rank r3">3ffaa</div>
-          <div class="mock-phone samsung-blue">
-            <div class="phone-island" style="width: 8px; border-radius: 50%;"></div>
-            <div class="phone-wallpaper">
-              <span class="wp-icon">📲</span>
-              <span class="wp-text">GALAXY</span>
-            </div>
-            <div class="phone-home-bar"></div>
+          <div class="input-group">
+            <label>Account / Phone Number</label>
+            <input type="text" class="input-control" id="withdrawAccount" placeholder="Enter account or phone number" required>
           </div>
-          <div style="font-size: 11px; font-weight: bold; color: #cbd5e1;">Samsung A17</div>
-        </div>
 
+          <p style="font-size: 11px; color: var(--gold-color); margin-bottom: 12px;">
+            ℹ️ Withdrawal requests are processed securely within 6–12 hours.
+          </p>
+
+          <button id="withdrawBtn" class="btn btn-disabled" disabled>
+            Withdraw 🔐
+          </button>
+        </form>
       </div>
-      <div class="ticket-grid" id="grid-phone"></div>
     </div>
 
-    <!-- Week 1 -->
-    <div class="card">
-      <div class="highlight-box">
-        <div class="card-header-title" id="t-w1-title">📅 CARRAA TORBEE 1 (TURTII GUYYAA 7)</div>
-        <div class="card-info" id="t-w1-info">
-          Carraa 1ffaan : 50,000 Br<br>
-          Carraa 2ffaan : 15,000 Br<br>
-          Carraa 3ffaan : 5,000 Br<br>
-          Ticket murachuuf qarshii 200 Br deposit godhaa.<br>
-          Lakkoofsa 1-800 keessaa filadhaa!
-        </div>
-      </div>
-      <div class="ticket-grid" id="grid-week1"></div>
-    </div>
-
-    <!-- Week 2 -->
-    <div class="card">
-      <div class="highlight-box" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.05);">
-        <div class="card-header-title" style="color: #ef4444;" id="t-w2-title">📅 CARRAA TORBEE 2 (TURTII GUYYAA 15)</div>
-        <div class="card-info" id="t-w2-info">
-          Carraa 1ffaan : 75,000 Br<br>
-          Carraa 2ffaan : 30,000 Br<br>
-          Carraa 3ffaan : 10,000 Br<br>
-          Ticket murachuuf qarshii 200 Br deposit godhaa.<br>
-          Lakkoofsa 1-1,000 keessaa filadhaa!
-        </div>
-      </div>
-      <div class="ticket-grid" id="grid-week2"></div>
-    </div>
-
-    <!-- Month 1 -->
-    <div class="card">
-      <div class="highlight-box" style="border-color: #22c55e; background: rgba(34, 197, 94, 0.05);">
-        <div class="card-header-title" style="color: #22c55e;" id="t-m1-title">📅 TIKET CARRAA JI'A 1F TURU</div>
-        <div class="card-info" id="t-m1-info">
-          Carraa 1ffaan : 100,000 Br<br>
-          Carraa 2ffaan : 35,000 Br<br>
-          Carraa 3ffaan : 15,000 Br<br>
-          Ticket murachuuf qarshii 250 Br deposit godhaa.<br>
-          Lakkoofsa 1-1,000 keessaa filadhaa!
-        </div>
-      </div>
-      <div class="ticket-grid" id="grid-month1"></div>
-    </div>
-
-    <!-- Month 2 -->
-    <div class="card">
-      <div class="highlight-box" style="border-color: #eab308; background: rgba(234, 179, 8, 0.05);">
-        <div class="card-header-title" style="color: #eab308;" id="t-m2-title">📅 TIKET CARRAA JI'A 2F TURU</div>
-        <div class="card-info" id="t-m2-info">
-          Carraa 1ffaan : 150,000 Br<br>
-          Carraa 2ffaan : 50,000 Br<br>
-          Carraa 3ffaan : 25,000 Br<br>
-          Ticket murachuuf qarshii 300 Br deposit godhaa.<br>
-          Lakkoofsa 1-1,500 keessaa filadhaa!
-        </div>
-      </div>
-      <div class="ticket-grid" id="grid-month2"></div>
-    </div>
-
-    <!-- Month 5 -->
-    <div class="card">
-      <div class="highlight-box" style="border-color: #a855f7; background: rgba(168, 85, 247, 0.05);">
-        <div class="card-header-title" style="color: #a855f7;" id="t-m5-title">📅 TIKET CARRAA JI'A 5F TURU</div>
-        <div class="card-info" id="t-m5-info">
-          Carraa 1ffaan : 250,000 Br<br>
-          Carraa 2ffaan : 150,000 Br<br>
-          Carraa 3ffaan : 50,000 Br<br>
-          Ticket murachuuf qarshii 500 Br deposit godhaa.<br>
-          Lakkoofsa 1-2,000 keessaa filadhaa!
-        </div>
-      </div>
-      <div class="ticket-grid" id="grid-month5"></div>
-    </div>
   </div>
 
-  <!-- SPIN PAGE -->
-  <div id="page-spin" class="page">
-    <div class="card" style="text-align: center;">
-      <div class="card-header-title" style="font-size:16px;" id="t-spin-title">⚙️ CARRAA GUYYAA (SPIN)</div>
-      <p style="font-size:12px; color:#cbd5e1;" id="t-spin-sub">Si'a 1 Spin naannessuuf kaffaltiini: 5 Br</p>
-      
-      <div class="wheel-wrapper">
-        <div class="wheel-pointer"></div>
-        <canvas id="wheelCanvas" width="250" height="250"></canvas>
-      </div>
-
-      <button class="btn btn-deposit" style="padding: 12px 30px; font-size: 15px; margin-top: 10px;" onclick="executeSpin()" id="t-spin-btn">SPIN NAANNESSI</button>
-      <div style="margin-top:15px; font-size:11px; color:#9ca3af;" id="t-spin-footer">
-        Badhaasota Spin: 3 Br, 5 Br, 10 Br, 15 Br, 25 Br, 50 Br, 100 Br, 150 Br, 200 Br, 500 Br, 1,000 Br
-      </div>
+  <!-- NAVIGATION BAR -->
+  <div class="navbar">
+    <div class="nav-item active" onclick="switchTab('homeScreen', this)">
+      <div class="nav-icon">🏠</div>
+      <div>Home</div>
     </div>
-  </div>
-
-  <!-- MY TICKETS PAGE -->
-  <div id="page-tickets" class="page">
-    <div class="card">
-      <div class="card-header-title" id="t-mytickets-head">🎟️ Tikkeettii Koo</div>
-      <div id="my-tickets-container"></div>
-      <div id="my-tickets-note" style="display: none; margin-top: 15px; padding: 12px; background: #1f2937; border-radius: 6px; font-size: 12px; color: #f59e0b; line-height: 1.5; border: 1px solid #374151;">
-        "Ticket isin murattan Carraan 1 hanga 3 hin moo'anne maalo carraa kana moo'achuf irra deebi'uun Ticket bitachun lakkoofsa jaalattan filachuun carraan keessan yaala!! Carraa gaarii Isiniif haa ta'uu🎉"
-      </div>
+    <div class="nav-item" onclick="switchTab('tasksScreen', this)">
+      <div class="nav-icon">📋</div>
+      <div>Tasks</div>
     </div>
-  </div>
-
-  <!-- PROFILE / ADMIN PAGE -->
-  <div id="page-profile" class="page">
-    <div class="card">
-      <div class="card-header-title">👤 PROFILE / ADMIN</div>
-      <p style="font-size: 13px;"><b>Maqaa Telegram:</b> <span id="tg-user-display">Fayyadamaa</span></p>
-      <p style="font-size: 13px;"><b>Balance Keessan:</b> <span id="profile-balance">0.00</span> Br</p>
-      <hr style="border-color: #1f2937; margin: 15px 0;">
-      <div style="font-weight: bold; color: #f59e0b; font-size: 13px;">Official ADMIN</div>
-      <div style="margin-top: 5px; font-size: 13px;">
-        👉 <a href="https://t.me/Ingkings" target="_blank" style="color: #38bdf8; font-weight: bold; text-decoration: none;">@Ingkings</a>
-      </div>
+    <div class="nav-item" onclick="switchTab('spinScreen', this)">
+      <div class="nav-icon">🎡</div>
+      <div>Spin</div>
     </div>
-  </div>
-
-  <!-- DEPOSIT MODAL -->
-  <div class="modal" id="deposit-modal">
-    <div class="modal-content">
-      <h3 style="color:#f59e0b; margin-top:0;">DEPOSIT PAYMENT</h3>
-      <div style="font-size:13px; line-height:1.6; margin-bottom:15px;">
-        <b>CBE BANK ACCOUNT:</b> 1000609844292<br>
-        <b>NAME:</b> GELETA ADEM<br><br>
-        <b>TELEBIRR NUMBER:</b> +251941470214<br>
-        <b>NAME:</b> GELETA ADEM
-      </div>
-      <div style="color:#ef4444; font-size:11px; margin-bottom:10px;">
-        ⚠️ Hubachiisa: Suuraa kaffaltii sobaa upload gochuun akkaunti keessan sa'aatii 5f ni uggura!
-      </div>
-      <input type="file" id="receipt-file" style="margin-bottom:15px; color:#fff; font-size:12px;">
-      <button class="btn btn-deposit" style="width:100%;" onclick="submitReceipt()">Submit Receipt</button>
-      <button class="btn" style="width:100%; margin-top:8px; background:#374151; color:#fff;" onclick="closeModal('deposit-modal')">Close</button>
+    <div class="nav-item" onclick="switchTab('inviteScreen', this)">
+      <div class="nav-icon">👥</div>
+      <div>Invite</div>
     </div>
-  </div>
-
-  <!-- WITHDRAW MODAL -->
-  <div class="modal" id="withdraw-modal">
-    <div class="modal-content">
-      <h3 style="color:#ef4444; margin-top:0;">MAALLAQA BAASUU</h3>
-      <p style="font-size:12px;">Maallaqa baafachuuf CBE BANK ykn TELEBIRR qofa fayyadamuu dandeessu.</p>
-      <p style="font-size:12px; color:#f59e0b;">Adeemsi maallaqa ofirraa baasuu sa'aatii 6-15 fudhachuu danda'a!!</p>
-      <button class="btn" style="width:100%; background:#374151; color:#fff;" onclick="closeModal('withdraw-modal')">Close</button>
+    <div class="nav-item" onclick="switchTab('profileScreen', this)">
+      <div class="nav-icon">👤</div>
+      <div>Profile</div>
     </div>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <div class="nav-bar">
-    <div class="nav-item active" onclick="switchTab('home', this)">🏠<br><span id="nav-home">Home</span></div>
-    <div class="nav-item" onclick="switchTab('spin', this)">⚙️<br><span id="nav-spin">Spin</span></div>
-    <div class="nav-item" onclick="switchTab('tickets', this)">🎟️<br><span id="nav-tickets">Tikkeettii Koo</span></div>
-    <div class="nav-item" onclick="switchTab('profile', this)">👤<br><span id="nav-profile">Profile/Admin</span></div>
   </div>
 
   <script>
-    let userBalance = parseFloat(localStorage.getItem('awards_balance') || '0.00');
-    let bookedTickets = JSON.parse(localStorage.getItem('awards_tickets') || '{}');
-    let spinCount = parseInt(localStorage.getItem('awards_spin_count') || '0');
-    let currentDegree = 0;
+    // --- APP CONSTANTS & CONFIGURATION ---
+    const ADSGRAM_BLOCK_ID = "46109";
+    const CHANNEL_LINK = "https://t.me/TirBrchannel";
+    const CONVERSION_RATE = 1500 / 5000; // 5000 Tir-br = 1500 ETB (0.3 ETB per Tir-br)
+    const DAILY_ADS_LIMIT = 50;
 
-    const prizes = ["3 Br", "5 Br", "10 Br", "15 Br", "25 Br", "50 Br", "100 Br", "150 Br"];
-    const colors = ["#1f2937", "#111827", "#1f2937", "#111827", "#1f2937", "#111827", "#1f2937", "#111827"];
-
-    // Dynamic Translations Data
-    const translations = {
-      om: {
-        welcomeTitle: "TAPHA NAANNESSAA TAPHACHUUN AMMUMA BADHAASOTA MO'ADHA!",
-        welcomeSub: "Baga gara AWARDS Mini App nagaan dhuftan. Tikkeettiwwan carraa murachuun badhaasota gurguddoo mo'adha.",
-        rulesHead: "⚠️ ULAAGAFII SEERA APPICHA ⚠️",
-        rulesBody: `1. Namni/qaamni kamiyyuu osoo Deposit hin raawwatin Ticket filachuufi Spin naannessu hin danda'u.<br>
-        2. Carraa Spin ykn Ticket yoo moo'attan battalumatti maallaqni gara Balance keessanitti dabalama.<br>
-        3. Spin naannessuuf ykn Ticket murachuuf Balance keessan 5 Br ol ta'uu qaba.<br>
-        4. Fayyadamaan rakkoo mudate Keessummessitootatti iyyachuu mirga qaba.<br>
-        5. Ticket murateef badhaasni kan qaqqabu yoo abbaa carraa ta'e malee!<br>
-        6. Walitti aansee Ticket 1-5 bitachuu mirga guutu qaba.<br>
-        7. Adeemsi maallaqa baasuu sa'aatii 6-15 fudhachuu danda'a.<br>
-        8. Carraa bilbiloota yoo moo'atan bilbila argachuuf mirga guutuu qabdu.<br>
-        9. Bilbila moo'atan bakka bilbilaa maallaqa fudhachuun Admin dubbisuun ni danda'ama.<br>
-        10. ⚠️ Kafaltii sobaa ykn Ticket sobaa yoo bitatan battalumatti sa'aatii 5f akka Scam ugguramtu!⚠️`,
-        phoneTitle: "📱 CARRAA BILBILOOTA MOBAAYILAA (Kaffaltii: 450 Br)",
-        phoneSub: "Lakkoofsa Ticket: 1-3000",
-        w1Title: "📅 CARRAA TORBEE 1 (TURTII GUYYAA 7)",
-        w1Info: "Carraa 1ffaan : 50,000 Br<br>Carraa 2ffaan : 15,000 Br<br>Carraa 3ffaan : 5,000 Br<br>Ticket murachuuf qarshii 200 Br deposit godhaa.<br>Lakkoofsa 1-800 keessaa filadhaa!",
-        w2Title: "📅 CARRAA TORBEE 2 (TURTII GUYYAA 15)",
-        w2Info: "Carraa 1ffaan : 75,000 Br<br>Carraa 2ffaan : 30,000 Br<br>Carraa 3ffaan : 10,000 Br<br>Ticket murachuuf qarshii 200 Br deposit godhaa.<br>Lakkoofsa 1-1,000 keessaa filadhaa!",
-        m1Title: "📅 TIKET CARRAA JI'A 1F TURU",
-        m1Info: "Carraa 1ffaan : 100,000 Br<br>Carraa 2ffaan : 35,000 Br<br>Carraa 3ffaan : 15,000 Br<br>Ticket murachuuf qarshii 250 Br deposit godhaa.<br>Lakkoofsa 1-1,000 keessaa filadhaa!",
-        m2Title: "📅 TIKET CARRAA JI'A 2F TURU",
-        m2Info: "Carraa 1ffaan : 150,000 Br<br>Carraa 2ffaan : 50,000 Br<br>Carraa 3ffaan : 25,000 Br<br>Ticket murachuuf qarshii 300 Br deposit godhaa.<br>Lakkoofsa 1-1,500 keessaa filadhaa!",
-        m5Title: "📅 TIKET CARRAA JI'A 5F TURU",
-        m5Info: "Carraa 1ffaan : 250,000 Br<br>Carraa 2ffaan : 150,000 Br<br>Carraa 3ffaan : 50,000 Br<br>Ticket murachuuf qarshii 500 Br deposit godhaa.<br>Lakkoofsa 1-2,000 keessaa filadhaa!",
-        spinTitle: "⚙️ CARRAA GUYYAA (SPIN)",
-        spinSub: "Si'a 1 Spin naannessuuf kaffaltiini: 5 Br",
-        spinBtn: "SPIN NAANNESSI",
-        myTicketsHead: "🎟️ Tikkeettii Koo",
-        navHome: "Home", navSpin: "Spin", navTickets: "Tikkeettii Koo", navProfile: "Profile/Admin"
-      },
-      en: {
-        welcomeTitle: "SPIN THE WHEEL & WIN PRIZES NOW!",
-        welcomeSub: "Welcome to AWARDS Mini App. Pick lucky tickets and win big prizes.",
-        rulesHead: "⚠️ APP RULES & REQUIREMENTS ⚠️",
-        rulesBody: `1. No user can select tickets or spin without completing deposit.<br>
-        2. Spin or Ticket winnings will be instantly added to your balance.<br>
-        3. Your balance must be above 5 Br to spin or buy tickets.<br>
-        4. Users can contact Support for any operational issue.<br>
-        5. Prize belongs only to the owner of the winning ticket!<br>
-        6. Users can purchase 1-5 tickets consecutively.<br>
-        7. Withdrawal process takes between 6-15 hours.<br>
-        8. You are eligible to receive phone prizes upon winning.<br>
-        9. Phone winners can opt for cash alternative via Admin.<br>
-        10. ⚠️ Fake payments or tickets lead to a 5-hour Scam ban!⚠️`,
-        phoneTitle: "📱 MOBILE PHONES CHANCE (Fee: 450 Br)",
-        phoneSub: "Ticket Numbers: 1-3000",
-        w1Title: "📅 WEEK 1 CHANCE (DURATION 7 DAYS)",
-        w1Info: "1st Prize : 50,000 Br<br>2nd Prize : 15,000 Br<br>3rd Prize : 5,000 Br<br>Deposit 200 Br to buy ticket.<br>Choose from numbers 1-800!",
-        w2Title: "📅 WEEK 2 CHANCE (DURATION 15 DAYS)",
-        w2Info: "1st Prize : 75,000 Br<br>2nd Prize : 30,000 Br<br>3rd Prize : 10,000 Br<br>Deposit 200 Br to buy ticket.<br>Choose from numbers 1-1000!",
-        m1Title: "📅 1 MONTH DURATION TICKET",
-        m1Info: "1st Prize : 100,000 Br<br>2nd Prize : 35,000 Br<br>3rd Prize : 15,000 Br<br>Deposit 250 Br to buy ticket.<br>Choose from numbers 1-1000!",
-        m2Title: "📅 2 MONTHS DURATION TICKET",
-        m2Info: "1st Prize : 150,000 Br<br>2nd Prize : 50,000 Br<br>3rd Prize : 25,000 Br<br>Deposit 300 Br to buy ticket.<br>Choose from numbers 1-1500!",
-        m5Title: "📅 5 MONTHS DURATION TICKET",
-        m5Info: "1st Prize : 250,000 Br<br>2nd Prize : 150,000 Br<br>3rd Prize : 50,000 Br<br>Deposit 500 Br to buy ticket.<br>Choose from numbers 1-2000!",
-        spinTitle: "⚙️ DAILY SPIN CHANCE",
-        spinSub: "1 Spin cost: 5 Br",
-        spinBtn: "SPIN WHEEL NOW",
-        myTicketsHead: "🎟️ My Tickets",
-        navHome: "Home", navSpin: "Spin", navTickets: "My Tickets", navProfile: "Profile/Admin"
-      },
-      am: {
-        welcomeTitle: "እሽክርክሪቱን ያሽከርክሩ እና አሁኑኑ ሽልማቶችን ያሸንፉ!",
-        welcomeSub: "እንኳን ወደ AWARDS Mini App በደህና መጡ። የዕድል ቲኬቶችን በመቁረጥ ትልልቅ ሽልማቶችን ያሸንፉ።",
-        rulesHead: "⚠️ የመተግበሪያው ህጎች እና መመሪያዎች ⚠️",
-        rulesBody: `1. ማንኛውም ተጠቃሚ ዲፖዚት ሳያደርግ ቲኬት መምረጥም ሆነ እሽክርክሪቱን ማሽከርከር አይችልም።<br>
-        2. በእሽክርክሪት ወይም በቲኬት ያሸነፉት ገንዘብ ወዲያውኑ ወደ ሂሳብዎ ይደመራል።<br>
-        3. ማሽከርከር ወይም ቲኬት ለመቁረጥ የሂሳብዎ መጠን ከ 5 ብር በላይ መሆን አለበት።<br>
-        4. ተጠቃሚዎች ለማንኛውም ችግር ድጋፍ ሰጪዎችን የመጠየቅ መብት አላቸው።<br>
-        5. ሽልማቱ የሚደርሰው የእድሉ ባለቤት ለሆነው ብቻ ነው!<br>
-        6. ተከታታይ 1-5 ቲኬቶችን የመግዛት ሙሉ መብት አለዎት።<br>
-        7. ገንዘብ የማውጣት ሂደት ከ6-15 ሰአታት ሊወስድ ይችላል።<br>
-        8. የስልክ እድል ካሸነፉ ስልኩን የመቀበል ሙሉ መብት አለዎት።<br>
-        9. ያሸነፉትን ስልክ በአድሚን በኩል በገንዘብ መለወጥ ይቻላል።<br>
-        10. ⚠️ የሀሰት ክፍያ ወይም ቲኬት ከገዙ ወዲያውኑ ለ5 ሰአት ይታገዳሉ!⚠️`,
-        phoneTitle: "📱 የሞባይል ስልኮች እድል (ክፍያ: 450 Br)",
-        phoneSub: "የቲኬት ቁጥሮች: 1-3000",
-        w1Title: "📅 የሳምንት 1 እድል (ለ7 ቀን የሚቆይ)",
-        w1Info: "1ኛ እድል : 50,000 Br<br>2ኛ እድል : 15,000 Br<br>3ኛ እድል : 5,000 Br<br>ቲኬት ለመቁረጥ 200 Br ገቢ ያድርጉ።<br>ከ 1-800 ቁጥሮች ይምረጡ!",
-        w2Title: "📅 የሳምንት 2 እድል (ለ15 ቀን የሚቆይ)",
-        w2Info: "1ኛ እድል : 75,000 Br<br>2ኛ እድል : 30,000 Br<br>3ኛ እድል : 10,000 Br<br>ቲኬት ለመቁረጥ 200 Br ገቢ ያድርጉ።<br>ከ 1-1000 ቁጥሮች ይምረጡ!",
-        m1Title: "📅 የ1 ወር እድል ቲኬት",
-        m1Info: "1ኛ እድል : 100,000 Br<br>2ኛ እድል : 35,000 Br<br>3ኛ እድል : 15,000 Br<br>ቲኬት ለመቁረጥ 250 Br ገቢ ያድርጉ።<br>ከ 1-1000 ቁጥሮች ይምረጡ!",
-        m2Title: "📅 የ2 ወር እድል ቲኬት",
-        m2Info: "1ኛ እድል : 150,000 Br<br>2ኛ እድል : 50,000 Br<br>3ኛ እድል : 25,000 Br<br>ቲኬት ለመቁረጥ 300 Br ገቢ ያድርጉ።<br>ከ 1-1500 ቁጥሮች ይምረጡ!",
-        m5Title: "📅 የ5 ወር እድል ቲኬት",
-        m5Info: "1ኛ እድል : 250,000 Br<br>2ኛ እድል : 150,000 Br<br>3ኛ እድል : 50,000 Br<br>ቲኬት ለመቁረጥ 500 Br ገቢ ያድርጉ።<br>ከ 1-2000 ቁጥሮች ይምረጡ!",
-        spinTitle: "⚙️ የዕለቱ እሽክርክሪት (SPIN)",
-        spinSub: "ለ1 ማሽከርከር ክፍያ: 5 Br",
-        spinBtn: "እሽክርክሪቱን ያሽከርክሩ",
-        myTicketsHead: "🎟️ የእኔ ቲኬቶች",
-        navHome: "Home", navSpin: "Spin", navTickets: "የእኔ ቲኬቶች", navProfile: "Profile/Admin"
-      }
+    // --- APPLICATION STATE ---
+    let state = {
+      balance: 0,
+      referrals: 0,
+      hasJoinedChannel: false,
+      channelClicked: false,
+      lastDailyClaim: null,
+      adsWatchedToday: 0,
+      lastAdResetDate: new Date().toDateString(),
+      completedTasks: [],
+      canSpin: true
     };
 
-    function syncBalance() {
-      document.getElementById('user-balance').innerText = userBalance.toFixed(2);
-      document.getElementById('profile-balance').innerText = userBalance.toFixed(2);
-      localStorage.setItem('awards_balance', userBalance.toString());
+    // Initialize Telegram WebApp SDK
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
     }
 
-    function switchTab(pageId, element) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Adsgram Controller Initialization
+    let AdController = null;
+    if (window.Adsgram) {
+      AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+    }
+
+    // --- INITIALIZATION ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      initUserData();
+      checkDailyReset();
+      renderTasks();
+      updateUI();
+
+      // Enforce Channel Join Modal
+      if (!state.hasJoinedChannel) {
+        document.getElementById('joinModal').style.display = 'flex';
+      } else {
+        document.getElementById('joinModal').style.display = 'none';
+      }
+    });
+
+    // --- STATE PERSISTENCE ---
+    function saveState() {
+      localStorage.setItem('tir_br_app_state', JSON.stringify(state));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem('tir_br_app_state');
+      if (saved) {
+        try {
+          state = { ...state, ...JSON.parse(saved) };
+        } catch (e) {
+          console.error("State loading error", e);
+        }
+      }
+    }
+
+    function checkDailyReset() {
+      const today = new Date().toDateString();
+      if (state.lastAdResetDate !== today) {
+        state.adsWatchedToday = 0;
+        state.lastAdResetDate = today;
+        saveState();
+      }
+    }
+
+    // --- USER TELEGRAM PROFILE INTEGRATION ---
+    function initUserData() {
+      const user = tg?.initDataUnsafe?.user;
+      const userName = user ? `${user.first_name} ${user.last_value || ''}`.trim() : "Tir-Br User";
+      const userId = user?.id ? user.id : Math.floor(100000 + Math.random() * 900000);
+
+      document.getElementById('userNameDisplay').innerText = userName;
+      document.getElementById('userIdDisplay').innerText = `ID: ${userId}`;
+      document.getElementById('userAvatar').innerText = userName.charAt(0).toUpperCase();
+
+      // Set Referral Link
+      const refLink = `https://t.me/Orotask_Bot?start=ref_${userId}`;
+      document.getElementById('refLinkDisplay').innerText = refLink;
+    }
+
+    // --- FORCED CHANNEL JOIN LOGIC ---
+    function markChannelClicked() {
+      state.channelClicked = true;
+      saveState();
+    }
+
+    function verifyChannelJoin() {
+      if (!state.channelClicked) {
+        alert("Please click 'Join Channel Now' and join the official channel first!");
+        return;
+      }
+      state.hasJoinedChannel = true;
+      saveState();
+      document.getElementById('joinModal').style.display = 'none';
+      confetti({ particleCount: 50, spread: 60 });
+    }
+
+    // --- UI UPDATER ---
+    function updateUI() {
+      const birrEquivalent = (state.balance * CONVERSION_RATE).toFixed(2);
+      
+      document.getElementById('balanceDisplay').innerText = `${state.balance.toLocaleString()} Tir-br`;
+      document.getElementById('birrDisplay').innerText = `≈ ${birrEquivalent} ETB`;
+      document.getElementById('adCounter').innerText = `${state.adsWatchedToday} / ${DAILY_ADS_LIMIT} Today`;
+      document.getElementById('refCountDisplay').innerText = `${state.referrals} / 10 Friends Joined`;
+
+      // Check Withdrawal Button Conditions (5000 Tir-br AND 10 Referrals required)
+      const withdrawBtn = document.getElementById('withdrawBtn');
+      const canWithdraw = state.balance >= 5000 && state.referrals >= 10;
+
+      if (canWithdraw) {
+        withdrawBtn.disabled = false;
+        withdrawBtn.className = "btn btn-primary";
+        withdrawBtn.innerText = "Withdraw Funds Now";
+      } else {
+        withdrawBtn.disabled = true;
+        withdrawBtn.className = "btn btn-disabled";
+        withdrawBtn.innerText = "Withdraw 🔐";
+      }
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(screenId, element) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + pageId).classList.add('active');
+      
+      document.getElementById(screenId).classList.add('active');
       element.classList.add('active');
     }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    // --- WATCH ADSGRAM VIDEO ADS ---
+    function watchAdsgramAd() {
+      checkDailyReset();
 
-    function submitReceipt() {
-      const fileInput = document.getElementById('receipt-file');
-      if (!fileInput.files || fileInput.files.length === 0) {
-        alert("Maaloo dursa suuraa nagahee upload godhaa!");
-        return;
-      }
-      alert("Nagaheen keessan Admin (@Ingkings) biratti ergameera. Qorannoo booda Balance keessanitti dabalama.");
-      closeModal('deposit-modal');
-    }
-
-    // Canvas Wheel Renderer
-    function drawWheel() {
-      const canvas = document.getElementById('wheelCanvas');
-      const ctx = canvas.getContext('2d');
-      const numSlices = prizes.length;
-      const sliceAngle = (2 * Math.PI) / numSlices;
-
-      ctx.clearRect(0, 0, 250, 250);
-
-      for (let i = 0; i < numSlices; i++) {
-        const angle = i * sliceAngle;
-        ctx.beginPath();
-        ctx.fillStyle = colors[i];
-        ctx.moveTo(125, 125);
-        ctx.arc(125, 125, 120, angle, angle + sliceAngle);
-        ctx.lineTo(125, 125);
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#f59e0b';
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(125, 125);
-        ctx.rotate(angle + sliceAngle / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#f59e0b";
-        ctx.font = "bold 13px Arial";
-        ctx.fillText(prizes[i], 110, 5);
-        ctx.restore();
-      }
-    }
-
-    function executeSpin() {
-      if (userBalance < 5) {
-        alert("Balance keessan 5 Br gadidha! Maaloo dursa Deposit godhaa.");
+      if (state.adsWatchedToday >= DAILY_ADS_LIMIT) {
+        alert("Daily ad limit reached (50/50). Please come back tomorrow!");
         return;
       }
 
-      userBalance -= 5;
-      spinCount++;
-      localStorage.setItem('awards_spin_count', spinCount.toString());
+      if (!AdController) {
+        alert("Adsgram SDK is initializing. Please try again in a few seconds.");
+        return;
+      }
 
-      let winAmount = 3;
-      if (spinCount === 2) winAmount = 15;
-      else if (spinCount === 3) winAmount = 10;
-      else if (spinCount === 20) winAmount = 50;
-      else winAmount = [3, 5, 10, 15, 25][Math.floor(Math.random() * 5)];
+      // Trigger Adsgram Reward Video
+      AdController.show().then((result) => {
+        // Successful ad watch (30 seconds completed)
+        state.balance += 5;
+        state.adsWatchedToday += 1;
+        saveState();
+        updateUI();
+        confetti({ particleCount: 40, spread: 50 });
+        alert("Success! You earned +5 Tir-br.");
+      }).catch((error) => {
+        console.log("Ad cancelled or failed:", error);
+        alert("Ad was not completed. Watch the full ad to earn rewards.");
+      });
+    }
 
-      const canvas = document.getElementById('wheelCanvas');
-      currentDegree += 1440 + Math.floor(Math.random() * 360);
-      canvas.style.transform = `rotate(${currentDegree}deg)`;
+    // --- DAILY CLAIM ---
+    function claimDailyReward() {
+      const now = new Date().getTime();
+      const oneDay = 24 * 60 * 60 * 1000;
+
+      if (state.lastDailyClaim && (now - state.lastDailyClaim) < oneDay) {
+        const hoursLeft = Math.ceil((oneDay - (now - state.lastDailyClaim)) / (1000 * 60 * 60));
+        alert(`You have already claimed today's reward! Next claim available in ${hoursLeft} hours.`);
+        return;
+      }
+
+      state.balance += 5;
+      state.lastDailyClaim = now;
+      saveState();
+      updateUI();
+      confetti({ particleCount: 60, spread: 70 });
+      alert("Congratulations! You claimed your daily 5 Tir-br reward.");
+    }
+
+    // --- SPIN WHEEL LOGIC ---
+    function spinWheel() {
+      if (!state.canSpin) {
+        alert("Spin limit reached for today. Try again tomorrow!");
+        return;
+      }
+
+      const wheel = document.getElementById('wheel');
+      const randomDegree = 1800 + Math.floor(Math.random() * 360); // Minimum 5 full rotations
+      wheel.style.transform = `rotate(${randomDegree}deg)`;
+      
+      const spinBtn = document.getElementById('spinBtn');
+      spinBtn.disabled = true;
 
       setTimeout(() => {
-        userBalance += winAmount;
-        syncBalance();
-        alert("🎉 Congrutulation 🎉\n\nQarshii " + winAmount + " Br motte jirta!!\n\nCarraa dabalataa moo'achuuf ammuma Spin naannessa.");
+        const prizes = [5, 10, 15, 20, 25, 50];
+        const won = prizes[Math.floor(Math.random() * prizes.length)];
+        
+        state.balance += won;
+        state.canSpin = false;
+        saveState();
+        updateUI();
+
+        confetti({ particleCount: 80, spread: 80 });
+        alert(`🎉 Congratulations! You won ${won} Tir-br from the Lucky Wheel!`);
+        spinBtn.disabled = false;
+      }, 4000);
+    }
+
+    // --- DYNAMIC TASKS SYSTEM ---
+    const mockTasks = [
+      { id: 1, title: "Join Crypto News Channel", reward: 15, link: "https://t.me/TirBrchannel" },
+      { id: 2, title: "Follow Community Telegram", reward: 10, link: "https://t.me/TirBrchannel" },
+      { id: 3, title: "Subscribe Sponsor Partner", reward: 20, link: "https://t.me/TirBrchannel" },
+      { id: 4, title: "Check Special Promo Task", reward: 25, link: "https://t.me/TirBrchannel" }
+    ];
+
+    function renderTasks() {
+      const taskContainer = document.getElementById('taskList');
+      taskContainer.innerHTML = "";
+
+      mockTasks.forEach(task => {
+        const isDone = state.completedTasks.includes(task.id);
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task-item';
+        taskDiv.innerHTML = `
+          <div class="task-info">
+            <h4>${task.title}</h4>
+            <p>+${task.reward} Tir-br</p>
+          </div>
+          <button class="btn ${isDone ? 'btn-disabled' : 'btn-accent'} task-btn" 
+                  onclick="completeTask(${task.id}, ${task.reward}, '${task.link}')" 
+                  ${isDone ? 'disabled' : ''}>
+            ${isDone ? 'Completed ✅' : 'Start Task'}
+          </button>
+        `;
+        taskContainer.appendChild(taskDiv);
+      });
+    }
+
+    function completeTask(id, reward, link) {
+      window.open(link, '_blank');
+      setTimeout(() => {
+        if (!state.completedTasks.includes(id)) {
+          state.completedTasks.push(id);
+          state.balance += reward;
+          saveState();
+          updateUI();
+          renderTasks();
+          alert(`Task completed! +${reward} Tir-br added to your balance.`);
+        }
       }, 3000);
     }
 
-    function buildGrid(elementId, catKey, maxTickets, price) {
-      const container = document.getElementById(elementId);
-      container.innerHTML = "";
-      if (!bookedTickets[catKey]) bookedTickets[catKey] = [];
-
-      for (let i = 1; i <= maxTickets; i++) {
-        const btn = document.createElement('button');
-        btn.className = 'ticket-btn';
-        const isBooked = bookedTickets[catKey].includes(i);
-
-        btn.innerText = i + (isBooked ? '_Tiket ✅' : '_Tiket ◼️');
-        if (isBooked) btn.classList.add('booked');
-
-        btn.onclick = function() {
-          if (bookedTickets[catKey].includes(i)) {
-            alert("Lakkoofsi tiket kun durse isin dura filatameera, maaloo lakkoofsa biroo ykn tiket biroo muradhaa.");
-            return;
-          }
-          if (userBalance < price) {
-            alert("Maalo Tiket murachuuf Haften Herrega keessanii gahaa miti. Herrega guutun Tiket carraa bitadhaa!");
-            return;
-          }
-
-          userBalance -= price;
-          bookedTickets[catKey].push(i);
-          localStorage.setItem('awards_tickets', JSON.stringify(bookedTickets));
-          syncBalance();
-
-          btn.innerText = i + '_Tiket ✅';
-          btn.classList.add('booked');
-          alert("Ticket " + i + " milkaa'inaan murattaniirtu!");
-          renderMyTickets();
-        };
-        container.appendChild(btn);
-      }
+    // --- REFERRAL LINK COPY ---
+    function copyReferralLink() {
+      const linkText = document.getElementById('refLinkDisplay').innerText;
+      navigator.clipboard.writeText(linkText).then(() => {
+        alert("Referral link copied to clipboard!");
+      }).catch(() => {
+        alert("Failed to copy link. Please copy manually.");
+      });
     }
 
-    function renderMyTickets() {
-      const box = document.getElementById('my-tickets-container');
-      const note = document.getElementById('my-tickets-note');
-      box.innerHTML = "";
-      let hasItem = false;
+    // --- WITHDRAWAL FORM HANDLER ---
+    function handleWithdraw(e) {
+      e.preventDefault();
 
-      for (let cat in bookedTickets) {
-        if (bookedTickets[cat].length > 0) {
-          hasItem = true;
-          const div = document.createElement('div');
-          div.style.padding = "10px";
-          div.style.borderBottom = "1px solid #1f2937";
-          div.style.fontSize = "12px";
-          div.innerHTML = "<b style='color:#f59e0b;'>" + cat.toUpperCase() + ":</b> Ticket " + bookedTickets[cat].join(', ');
-          box.appendChild(div);
-        }
+      const name = document.getElementById('withdrawName').value;
+      const method = document.getElementById('withdrawMethod').value;
+      const account = document.getElementById('withdrawAccount').value;
+
+      if (state.balance < 5000 || state.referrals < 10) {
+        alert("Requirements not met! You need 5,000 Tir-br and 10 active referrals.");
+        return;
       }
-      if (!hasItem) {
-        box.innerHTML = "<div style='font-size:12px; color:#9ca3af;'>Ticketin muratame hin jiru.</div>";
-        note.style.display = 'none';
-      } else {
-        note.style.display = 'block';
-      }
+
+      alert(`Withdrawal Request Submitted Successfully!\n\nName: ${name}\nMethod: ${method}\nAccount: ${account}\nAmount: ${state.balance} Tir-br\n\nStatus: Processing (Estimated 6–12 Hours).`);
+
+      // Deduct balance and update state
+      state.balance = 0;
+      saveState();
+      updateUI();
+      document.getElementById('withdrawForm').reset();
     }
-
-    // 95+ Dynamic Winner Names Broadcast List
-    const winnerData = [
-      "🎉 TORBEE 1: 1ffaan: Dereje Mokonin | 2ffaan: Solomon Ayana | 3ffaan: Gemeda Yaqub",
-      "📱 CARRAA BILBILA: 1ffaan: Chala Abebe | 2ffaan: Aster Bedane | 3ffaan: Tolosa Fikru",
-      "🎉 JI'A 1: 1ffaan: Mulugeta Tadesse | 2ffaan: Hawi Gudeta | 3ffaan: Bikila Worku",
-      "🎉 TORBEE 2: 1ffaan: Roba Kene | 2ffaan: Obsa Dinsa | 3ffaan: Ebisa Worku",
-      "🎉 JI'A 2: 1ffaan: Almaz Bekele | 2ffaan: Taye Ararso | 3ffaan: Senait Regassa",
-      "🎉 JI'A 5: 1ffaan: Gudeta Olana | 2ffaan: Firomsa Bekele | 3ffaan: Kennaa Megersa",
-      "📱 CARRAA BILBILA: 1ffaan: Bonsa Tesfaye | 2ffaan: Lomi Dinqa | 3ffaan: Caala Tura",
-      "🎉 TORBEE 1: 1ffaan: Dawit Jibat | 2ffaan: Hana Girma | 3ffaan: Gutama Feyisa",
-      "🎉 JI'A 1: 1ffaan: Yared Negash | 2ffaan: Caaltuu Lammi | 3ffaan: Desta Kuma"
-    ];
-    let winIndex = 0;
-
-    function startWinnerBroadcast() {
-      const toast = document.getElementById('winner-toast');
-      setInterval(() => {
-        toast.innerText = winnerData[winIndex];
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 6000);
-        winIndex = (winIndex + 1) % winnerData.length;
-      }, 10000);
-    }
-
-    // Full Multi-Language Dynamic Switcher
-    function changeLanguage(lang) {
-      const t = translations[lang] || translations.om;
-      document.getElementById('t-welcome-title').innerText = t.welcomeTitle;
-      document.getElementById('t-welcome-sub').innerText = t.welcomeSub;
-      document.getElementById('t-rules-head').innerText = t.rulesHead;
-      document.getElementById('t-rules-body').innerHTML = t.rulesBody;
-      document.getElementById('t-phone-title').innerText = t.phoneTitle;
-      document.getElementById('t-phone-sub').innerText = t.phoneSub;
-
-      document.getElementById('t-w1-title').innerText = t.w1Title;
-      document.getElementById('t-w1-info').innerHTML = t.w1Info;
-
-      document.getElementById('t-w2-title').innerText = t.w2Title;
-      document.getElementById('t-w2-info').innerHTML = t.w2Info;
-
-      document.getElementById('t-m1-title').innerText = t.m1Title;
-      document.getElementById('t-m1-info').innerHTML = t.m1Info;
-
-      document.getElementById('t-m2-title').innerText = t.m2Title;
-      document.getElementById('t-m2-info').innerHTML = t.m2Info;
-
-      document.getElementById('t-m5-title').innerText = t.m5Title;
-      document.getElementById('t-m5-info').innerHTML = t.m5Info;
-
-      document.getElementById('t-spin-title').innerText = t.spinTitle;
-      document.getElementById('t-spin-sub').innerText = t.spinSub;
-      document.getElementById('t-spin-btn').innerText = t.spinBtn;
-      document.getElementById('t-mytickets-head').innerText = t.myTicketsHead;
-
-      document.getElementById('nav-home').innerText = t.navHome;
-      document.getElementById('nav-spin').innerText = t.navSpin;
-      document.getElementById('nav-tickets').innerText = t.navTickets;
-      document.getElementById('nav-profile').innerText = t.navProfile;
-    }
-
-    window.onload = function() {
-      syncBalance();
-      renderMyTickets();
-      drawWheel();
-      startWinnerBroadcast();
-
-      buildGrid('grid-phone', 'phone', 3000, 450);
-      buildGrid('grid-week1', 'week1', 800, 200);
-      buildGrid('grid-week2', 'week2', 1000, 200);
-      buildGrid('grid-month1', 'month1', 1000, 250);
-      buildGrid('grid-month2', 'month2', 1500, 300);
-      buildGrid('grid-month5', 'month5', 2000, 500);
-
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-        const user = window.Telegram.WebApp.initDataUnsafe.user;
-        if (user) {
-          document.getElementById('tg-user-display').innerText = (user.first_name || '') + ' ' + (user.last_name || '') + ' (@' + (user.username || 'N/A') + ')';
-        }
-      }
-    };
   </script>
 </body>
 </html>
