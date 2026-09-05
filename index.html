@@ -33,7 +33,7 @@
       padding-bottom: 80px;
     }
 
-    /* Force Fullscreen Channel Overlay */
+    /* Channel Join Guard Overlay */
     #channel-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -47,30 +47,32 @@
       text-align: center;
     }
 
-    /* Header Profile & Embedded SVG Logo */
-    .header-card {
-      background: var(--card-bg);
-      padding: 15px;
-      margin: 10px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      border: 1px solid #1e3827;
-    }
-
-    .svg-logo {
-      width: 60px;
-      height: 60px;
+    /* Embedded Vector Logo (Gonkumaa Suuraan Badaa Hin Hata'u) */
+    .app-logo-box {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      background: radial-gradient(circle, #f59e0b, #b45309);
+      background: linear-gradient(135deg, #10b981, #047857);
+      border: 3px solid var(--gold);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-weight: bold;
+      font-weight: 800;
       font-size: 20px;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+    }
+
+    /* Header Profile Layout */
+    .header-card {
+      background: var(--card-bg);
+      padding: 15px;
+      margin: 10px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid #1e3827;
     }
 
     .profile-img {
@@ -122,7 +124,7 @@
       cursor: not-allowed;
     }
 
-    /* Enhanced Wheel Graphic with Text */
+    /* Spin Wheel Graphics */
     .wheel-container {
       position: relative;
       width: 260px;
@@ -158,6 +160,7 @@
       z-index: 10;
     }
 
+    /* Navigation Bar */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -191,28 +194,28 @@
 </head>
 <body>
 
-  <!-- 1. FORCED TELEGRAM CHANNEL OVERLAY -->
+  <!-- 1. MANDATORY CHANNEL JOIN OVERLAY -->
   <div id="channel-overlay">
-    <div class="svg-logo" style="width:80px; height:80px; font-size:26px; margin-bottom:15px;">Ŧir</div>
+    <div class="app-logo-box" style="width: 85px; height: 85px; font-size: 24px; margin-bottom: 15px;">Tir-Br</div>
     <h2>Join Our Official Channel</h2>
-    <p style="color: var(--text-gray); margin: 10px 0; font-size: 13px;">You must join our Telegram channel to access the Tir-br Mini App!</p>
+    <p style="color: var(--text-gray); margin: 10px 0; font-size: 13px;">You must join our Telegram channel to access Tir-br Mini App!</p>
     <a href="https://t.me/TirBrchannel" target="_blank" class="btn" style="text-decoration: none; display: block; margin-bottom: 10px;">JOIN CHANNEL NOW</a>
     <button class="btn" style="background: #3b82f6; color: #fff;" onclick="verifyChannelJoin()">I HAVE JOINED</button>
   </div>
 
-  <!-- HEADER WITH DYNAMIC LOGO & TELEGRAM USER DATA -->
+  <!-- HEADER WITH LOGO & TELEGRAM USER DATA -->
   <div class="header-card">
-    <div class="svg-logo">Ŧir</div>
+    <div class="app-logo-box">Tir-Br</div>
     <div>
       <h3 id="app-title">Tir-br Official</h3>
       <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
         <img id="tg-photo" src="https://via.placeholder.com/45" class="profile-img" alt="Profile">
         <div>
-          <div id="tg-username" style="font-weight: bold; font-size: 14px;">User</div>
-          <div style="font-size: 11px; color: var(--text-gray);">ID: <span id="tg-id">000000</span></div>
+          <div id="tg-username" style="font-weight: bold; font-size: 14px;">Mr Ediris</div>
+          <div style="font-size: 11px; color: var(--text-gray);">ID: <span id="tg-id">7585748010</span></div>
         </div>
       </div>
-      <div class="balance-badge"><span id="balance-txt">0</span> Ŧir-br</div>
+      <div class="balance-badge"><span id="balance-txt">65</span> Ŧir-br</div>
     </div>
   </div>
 
@@ -223,11 +226,11 @@
     <div class="card">
       <h4>Daily Claim</h4>
       <p style="font-size: 12px; color: var(--text-gray);">Get free reward every 24 hours.</p>
-      <button id="daily-btn" class="btn" onclick="claimDaily()">Claim Daily +5 Ŧir-br</button>
+      <button id="daily-btn" class="btn" style="background:#374151; color:#9ca3af;" disabled>Claimed Today</button>
     </div>
 
     <div class="card">
-      <h4>Watch Ads (Limit: <span id="ad-count">0</span>/50)</h4>
+      <h4>Watch Ads (Limit: <span id="ad-count">2</span>/50)</h4>
       <p style="font-size: 12px; color: var(--text-gray);">Watch 30s ad to earn +5 Ŧir-br.</p>
       <button id="ad-btn" class="btn" onclick="watchAdsgramAd()">Watch Ad (+5 Ŧir-br)</button>
     </div>
@@ -249,7 +252,7 @@
       <div class="wheel-container">
         <div class="pointer"></div>
         <div id="wheel" class="wheel">
-          <span style="color: #fff; text-shadow: 1px 1px 2px #000;">SPIN WHEEL</span>
+          <span style="color: #fff; text-shadow: 1px 1px 2px #000;">SPIN NOW</span>
         </div>
       </div>
       <button id="spin-btn" class="btn" onclick="spinWheel()">SPIN NOW</button>
@@ -264,7 +267,7 @@
         Invite friends who join via your link & star the bot. Earn +50 Ŧir-br + 1 Spin per friend!
       </p>
       <p style="font-size: 13px;">Invited: <b id="ref-count" style="color: var(--accent-green);">0</b> / 10 required for withdrawal</p>
-      <input type="text" id="ref-link" readonly value="https://t.me/TirBrchannel?start=ref">
+      <input type="text" id="ref-link" readonly value="https://t.me/TirBrchannel?start=7585748010">
       <button class="btn" onclick="copyRefLink()">Copy Invite Link</button>
     </div>
   </div>
@@ -273,7 +276,7 @@
   <div id="screen-my" class="screen">
     <div class="card">
       <h4>My Profile</h4>
-      <p style="font-size: 13px; color: var(--text-gray); margin-top: 5px;">Total Balance: <b style="color:var(--accent-green)"><span class="bal-val">0</span> Ŧir-br</b></p>
+      <p style="font-size: 13px; color: var(--text-gray); margin-top: 5px;">Total Balance: <b style="color:var(--accent-green)"><span class="bal-val">65</span> Ŧir-br</b></p>
       <p style="font-size: 12px; color: var(--text-gray);">1 Ŧir-br = ETB 0.3 (5000 Ŧir-br = ETB 1,500)</p>
     </div>
 
@@ -284,17 +287,17 @@
       </p>
 
       <label style="font-size: 12px;">Full Name</label>
-      <input type="text" id="wd-name" placeholder="Enter Full Name">
+      <input type="text" id="wd-name" placeholder="crssggt">
 
       <label style="font-size: 12px;">Payment Method</label>
       <select id="wd-method">
+        <option>M-PESA</option>
         <option>CBE BANK</option>
         <option>TELEBIRR</option>
-        <option>M-PESA</option>
       </select>
 
       <label style="font-size: 12px;">Account Number</label>
-      <input type="number" id="wd-acc" placeholder="Account Number">
+      <input type="number" id="wd-acc" placeholder="25155522">
 
       <button id="withdraw-btn" class="btn btn-locked" disabled onclick="processWithdrawal()">Withdraw 🔐</button>
     </div>
@@ -312,7 +315,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let balance = 65; // Retaining test balance
+    let balance = 65;
     let dailyClaimed = true;
     let adsWatched = 2;
     let spinsLeft = 0;
@@ -376,19 +379,6 @@
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById('screen-' + tabName).classList.add('active');
       element.classList.add('active');
-    }
-
-    function claimDaily() {
-      if (dailyClaimed) {
-        alert("Daily task already claimed today!");
-        return;
-      }
-      balance += 5;
-      dailyClaimed = true;
-      document.getElementById('daily-btn').disabled = true;
-      document.getElementById('daily-btn').innerText = "Claimed Today";
-      updateUI();
-      alert("Successfully claimed +5 Ŧir-br!");
     }
 
     function watchAdsgramAd() {
