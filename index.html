@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Tir-Br Telegram Mini App</title>
-  
-  <!-- Telegram Web App SDK -->
+  <title>Ŧir-Br Mini App</title>
+
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Adsgram SDK -->
-  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-  <!-- Canvas Confetti Library for Spin / Claim Effects -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   
+  <!-- Adsgram SDK Integration (Block ID: 46109) -->
+  <script src="https://adsgram.ai/js/adsgram-adbox.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent-color: #38bdf8;
-      --gold-color: #f59e0b;
-      --text-color: #f8fafc;
-      --text-muted: #94a3b8;
-      --danger-color: #ef4444;
-      --success-color: #22c55e;
-      --border-radius: 16px;
+      --bg-color: #062311;
+      --card-bg: #0b381c;
+      --accent-color: #f59e0b;
+      --green-btn: #22c55e;
+      --text-main: #ffffff;
+      --text-sub: #9ca3af;
     }
 
     * {
@@ -35,264 +34,193 @@
 
     body {
       background-color: var(--bg-color);
-      color: var(--text-color);
+      color: var(--text-main);
+      padding-bottom: 80px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      padding-bottom: 80px;
     }
 
-    /* Container & Screens */
-    .app-container {
-      flex: 1;
-      padding: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-      width: 100%;
+    /* Top Bar Header */
+    .header {
+      background-color: #03140a;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #14532d;
     }
 
-    .screen {
-      display: none;
-      animation: fadeIn 0.3s ease-in-out;
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .screen.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Header & Logo */
-    .brand-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .brand-logo {
-      width: 90px;
-      height: 90px;
+    .app-logo-img {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 3px solid var(--gold-color);
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
-      margin-bottom: 10px;
+      border: 2px solid var(--accent-color);
       object-fit: cover;
     }
 
-    .brand-title {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: var(--gold-color);
-      text-transform: uppercase;
+    .user-info {
+      display: flex;
+      flex-direction: column;
     }
 
-    .bot-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
+    .user-name {
+      font-weight: bold;
+      font-size: 15px;
+      color: #fff;
     }
 
-    /* Balance Card */
-    .balance-card {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: var(--border-radius);
+    .user-id {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .balances-bar {
+      display: flex;
+      gap: 8px;
+    }
+
+    .bal-badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .bal-badge.tir { color: var(--accent-color); }
+    .bal-badge.gem { color: #a855f7; }
+
+    /* Forced Channel Join Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border: 2px solid var(--accent-color);
+      border-radius: 16px;
+      padding: 24px;
       text-align: center;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-width: 320px;
+      width: 100%;
     }
 
-    .balance-title {
-      font-size: 14px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .modal-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 12px;
     }
 
-    .balance-value {
-      font-size: 36px;
-      font-weight: 900;
-      color: var(--gold-color);
-      margin: 8px 0;
-    }
-
-    .balance-equivalent {
-      font-size: 13px;
+    .modal-card h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
       color: var(--accent-color);
     }
 
-    /* Cards & Modules */
-    .card {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(255,255,255,0.05);
+    .modal-card p {
+      font-size: 13px;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+      line-height: 1.4;
     }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Buttons */
     .btn {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
+      border-radius: 10px;
       border: none;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 15px;
+      font-weight: bold;
+      font-size: 14px;
       cursor: pointer;
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #0f172a;
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-
-    .btn-accent {
-      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-      color: #0f172a;
-    }
-
-    .btn-disabled {
-      background: #334155 !important;
-      color: #64748b !important;
-      cursor: not-allowed !important;
-      opacity: 0.7;
-    }
-
-    /* Navigation Bar */
-    .navbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 70px;
-      background-color: #1e293b;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      justify-content: space-around;
       align-items: center;
-      z-index: 100;
+      gap: 8px;
+      margin-bottom: 10px;
+      transition: opacity 0.2s;
     }
 
-    .nav-item {
+    .btn-tg { background: #0088cc; color: white; }
+    .btn-action { background: var(--green-btn); color: white; }
+    .btn:active { opacity: 0.8; }
+
+    /* Main Container Views */
+    .tab-view {
+      display: none;
+      padding: 16px;
+      flex: 1;
+    }
+
+    .tab-view.active {
+      display: block;
+    }
+
+    /* Spin Wheel Section */
+    .spin-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: var(--text-muted);
-      font-size: 11px;
-      text-decoration: none;
-      cursor: pointer;
-      width: 20%;
-    }
-
-    .nav-item.active {
-      color: var(--gold-color);
-    }
-
-    .nav-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-
-    /* Forced Join Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(15, 23, 42, 0.95);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      border: 2px solid var(--gold-color);
-      padding: 24px;
       text-align: center;
-      max-width: 400px;
+    }
+
+    .progress-box {
+      background: var(--card-bg);
       width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #166534;
     }
 
-    /* Task Item */
-    .task-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    .progress-bar-bg {
+      background: #14532d;
+      height: 14px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
     }
 
-    .task-item:last-child {
-      border-bottom: none;
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #f59e0b, #10b981);
+      height: 10%;
+      width: 10%;
+      transition: width 0.3s;
     }
 
-    .task-info h4 {
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .task-info p {
-      font-size: 12px;
-      color: var(--gold-color);
-    }
-
-    .task-btn {
-      width: auto;
-      padding: 8px 16px;
-      font-size: 12px;
-    }
-
-    /* Spin Wheel Container */
-    .wheel-container {
+    .wheel-wrapper {
       position: relative;
       width: 260px;
       height: 260px;
-      margin: 20px auto;
+      margin: 20px 0;
     }
 
-    .wheel {
+    .wheel-img {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      border: 8px solid var(--gold-color);
-      position: relative;
-      overflow: hidden;
-      transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 1);
-      background: conic-gradient(
-        #f59e0b 0deg 60deg,
-        #1e293b 60deg 120deg,
-        #38bdf8 120deg 180deg,
-        #8b5cf6 180deg 240deg,
-        #ec4899 240deg 300deg,
-        #22c55e 300deg 360deg
-      );
+      border: 6px solid var(--accent-color);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      transition: transform 3s cubic-bezier(0.15, 0.99, 0.18, 1);
     }
 
     .wheel-pointer {
@@ -300,547 +228,379 @@
       top: -10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-top: 25px solid var(--danger-color);
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid #ef4444;
       z-index: 10;
     }
 
-    /* Inputs */
-    .input-group {
-      margin-bottom: 14px;
-      text-align: left;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .input-control {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background-color: #0f172a;
-      color: white;
-      font-size: 14px;
-    }
-
-    .profile-avatar {
-      width: 70px;
-      height: 70px;
+    .spin-center-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px; height: 70px;
       border-radius: 50%;
-      margin: 0 auto 12px;
-      background-color: var(--accent-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
+      background: var(--accent-color);
+      color: #000;
       font-weight: bold;
+      border: 3px solid #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
-    /* Banner Ad Simulation */
-    .screen-banner {
-      width: 100%;
-      height: 60px;
-      background-color: #334155;
-      border-radius: 8px;
+    /* Section Cards & Tasks */
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #14532d;
+    }
+
+    .task-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .task-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #14532d;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-      border: 1px dashed var(--gold-color);
+      font-size: 18px;
+      color: var(--accent-color);
     }
+
+    /* Bottom Navigation Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: #03140a;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #14532d;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-sub);
+      font-size: 11px;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item i { font-size: 18px; }
+    .nav-item.active { color: var(--accent-color); font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <!-- MANDATORY CHANNEL JOIN MODAL -->
-  <div id="joinModal" class="modal-overlay">
-    <div class="modal-content">
-      <img src="https://raw.githubusercontent.com/telegram/prompt-assets/main/bot-avatar.png" alt="Tir-Br Logo" class="brand-logo" id="modalLogo">
-      <h2 style="color: var(--gold-color); margin-bottom: 10px;">Join Official Channel</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-        To unlock all features and start earning <strong>Tir-br</strong>, you must join our official Telegram channel first!
-      </p>
-      <a href="https://t.me/TirBrchannel" target="_blank" class="btn btn-primary" onclick="markChannelClicked()" style="text-decoration: none; margin-bottom: 12px;">
-        📢 Join Channel Now
-      </a>
-      <button class="btn btn-accent" onclick="verifyChannelJoin()">
-        ✅ I Have Joined
+  <!-- Top Header -->
+  <div class="header">
+    <div class="user-profile">
+      <!-- App Logo -->
+      <img src="https://i.ibb.co/L8vpt4D/1000029259.png" class="app-logo-img" alt="Ŧir-Br Logo">
+      <div class="user-info">
+        <span class="user-name" id="userName">User</span>
+        <span class="user-id">ID: <span id="userId">7658278710</span></span>
+      </div>
+    </div>
+    <div class="balances-bar">
+      <div class="bal-badge tir"><i class="fa-solid fa-coins"></i> <span id="tirBalance">0</span> Ŧir-br</div>
+      <div class="bal-badge gem"><i class="fa-solid fa-gem"></i> <span id="gemBalance">0</span></div>
+    </div>
+  </div>
+
+  <!-- Mandatory Join Channel Modal -->
+  <div class="modal-overlay" id="joinModal">
+    <div class="modal-card">
+      <img src="https://i.ibb.co/L8vpt4D/1000029259.png" alt="Logo">
+      <h2>Channel Join Required!</h2>
+      <p>To access the <b>Ŧir-Br</b> app, you must first join our official Telegram channel.</p>
+      <button class="btn btn-tg" onclick="joinChannel()"><i class="fa-brands fa-telegram"></i> Join Channel</button>
+      <button class="btn btn-action" onclick="verifyJoin()"><i class="fa-solid fa-circle-check"></i> Verify & Start</button>
+    </div>
+  </div>
+
+  <!-- TAB 1: SPIN WHEEL -->
+  <div class="tab-view active" id="tab-spin">
+    <div class="spin-container">
+      <div class="progress-box">
+        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold;">
+          <span>Target Withdrawal</span>
+          <span><span id="progressTir">0</span> / 5000 Ŧir-br</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="wheel-wrapper">
+        <div class="wheel-pointer"></div>
+        <img src="https://cdn-icons-png.flaticon.com/512/812/812318.png" class="wheel-img" id="wheelImg">
+        <div class="spin-center-btn" onclick="spinWheel()">
+          <span>SPIN</span>
+          <span style="font-size:10px;">10 Ŧir-br</span>
+        </div>
+      </div>
+
+      <button class="btn btn-action" style="margin-top:15px;" onclick="switchTab('tab-team')">
+        <i class="fa-solid fa-user-plus"></i> Invite Friends for Spins
       </button>
     </div>
   </div>
 
-  <div class="app-container">
-
-    <!-- BRANDING HEADER -->
-    <div class="brand-header">
-      <img src="https://raw.githubusercontent.com/telegram/prompt-assets/main/bot-avatar.png" alt="Tir-Br Logo" class="brand-logo" id="mainLogo">
-      <div class="brand-title">Tir-Br</div>
-      <div class="bot-subtitle">@Orotask_Bot</div>
-    </div>
-
-    <!-- BALANCE OVERVIEW -->
-    <div class="balance-card">
-      <div class="balance-title">Your Total Balance</div>
-      <div class="balance-value" id="balanceDisplay">0.00 Tir-br</div>
-      <div class="balance-equivalent" id="birrDisplay">≈ 0.00 ETB</div>
-    </div>
-
-    <!-- TAB 1: HOME (ADS & DAILY TASK) -->
-    <div id="homeScreen" class="screen active">
-      <div class="card">
-        <div class="card-title">
-          <span>📅 Daily Check-in</span>
-          <span style="color: var(--gold-color); font-size: 13px;">+5 Tir-br</span>
-        </div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Claim your free daily reward once every 24 hours.</p>
-        <button id="dailyBtn" class="btn btn-accent" onclick="claimDailyReward()">Claim Daily Reward</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>📺 Watch Ads & Earn</span>
-          <span style="color: var(--gold-color); font-size: 13px;" id="adCounter">0 / 50 Today</span>
-        </div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-          Watch a full 30-second ad to earn <strong>5 Tir-br</strong>. Maximum 50 ads per day.
-        </p>
-        <button id="watchAdBtn" class="btn btn-primary" onclick="watchAdsgramAd()">
-          ▶️ Watch Video Ad (+5 Tir-br)
-        </button>
-      </div>
-
-      <div class="screen-banner">
-        <span>⚡ Adsgram Banner Space (5 Seconds Auto-Refresh)</span>
-      </div>
-    </div>
-
-    <!-- TAB 2: TASKS -->
-    <div id="tasksScreen" class="screen">
-      <div class="card">
-        <div class="card-title">Available Micro-Tasks</div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Complete task instructions to earn extra Tir-br tokens.</p>
-        
-        <div id="taskList">
-          <!-- Dynamic tasks rendered here -->
+  <!-- TAB 2: TASKS & ADSGRAM ADS -->
+  <div class="tab-view" id="tab-earn">
+    <div class="section-title"><i class="fa-solid fa-rectangle-ad"></i> Watch Ads & Earn</div>
+    
+    <!-- ADSGRAM ADS BUTTON -->
+    <div class="task-card" style="border:1px solid var(--accent-color);">
+      <div class="task-info">
+        <div class="task-icon" style="color:#ef4444;"><i class="fa-solid fa-play"></i></div>
+        <div>
+          <div style="font-weight:bold;">Watch Video Ad (Adsgram)</div>
+          <div style="font-size:12px; color:var(--text-sub);">Earn 10 Ŧir-br per view</div>
         </div>
       </div>
+      <button class="btn btn-action" style="width:auto; padding:8px 16px;" onclick="showAdsgramAd()">Watch Ad</button>
     </div>
 
-    <!-- TAB 3: SPIN WHEEL -->
-    <div id="spinScreen" class="screen">
-      <div class="card" style="text-align: center;">
-        <div class="card-title" style="justify-content: center;">🎡 Lucky Wheel</div>
-        <p style="font-size: 12px; color: var(--text-muted);">Spin to win up to 50 Tir-br daily!</p>
+    <div class="section-title" style="margin-top:20px;"><i class="fa-solid fa-list-check"></i> Channel Tasks</div>
 
-        <div class="wheel-container">
-          <div class="wheel-pointer"></div>
-          <div class="wheel" id="wheel"></div>
-        </div>
-
-        <button id="spinBtn" class="btn btn-primary" onclick="spinWheel()">Spin Wheel Now</button>
-      </div>
-    </div>
-
-    <!-- TAB 4: INVITE / REFERRALS -->
-    <div id="inviteScreen" class="screen">
-      <div class="card">
-        <div class="card-title">👥 Referral Program</div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-          Invite friends using your unique link. Earn <strong>50 Tir-br</strong> for every friend who joins!
-        </p>
-
-        <div style="background-color: #0f172a; padding: 12px; border-radius: 8px; font-size: 12px; word-break: break-all; margin-bottom: 12px; text-align: center; border: 1px dashed var(--gold-color);" id="refLinkDisplay">
-          https://t.me/Orotask_Bot?start=ref_123456
-        </div>
-
-        <button class="btn btn-accent" onclick="copyReferralLink()">📋 Copy Referral Link</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Withdrawal Progress</div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
-          Requirement: Invite at least 10 active friends.
-        </p>
-        <div style="font-size: 20px; font-weight: 800; color: var(--gold-color); text-align: center; margin: 10px 0;" id="refCountDisplay">
-          0 / 10 Friends Joined
+    <div class="task-card">
+      <div class="task-info">
+        <div class="task-icon"><i class="fa-brands fa-telegram"></i></div>
+        <div>
+          <div style="font-weight:bold;">Join Official Channel</div>
+          <div style="font-size:12px; color:var(--text-sub);">+15 Ŧir-br</div>
         </div>
       </div>
+      <button class="btn btn-action" style="width:auto; padding:8px 16px;" onclick="doTask('https://t.me/TirBrchannel', 15)">GO</button>
     </div>
 
-    <!-- TAB 5: PROFILE & WITHDRAW -->
-    <div id="profileScreen" class="screen">
-      <div class="card" style="text-align: center;">
-        <div class="profile-avatar" id="userAvatar">U</div>
-        <h3 id="userNameDisplay">Telegram User</h3>
-        <p style="font-size: 12px; color: var(--text-muted);" id="userIdDisplay">ID: 00000000</p>
+    <div class="task-card">
+      <div class="task-info">
+        <div class="task-icon"><i class="fa-solid fa-star"></i></div>
+        <div>
+          <div style="font-weight:bold;">Join Partner Channel</div>
+          <div style="font-size:12px; color:var(--text-sub);">+10 Ŧir-br</div>
+        </div>
       </div>
-
-      <div class="card">
-        <div class="card-title">💳 Withdraw Funds</div>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-          Minimum Balance: <strong>5,000 Tir-br (= ETB 1,500)</strong><br>
-          Requirement: Must have invited 10 active friends.
-        </p>
-
-        <form id="withdrawForm" onsubmit="handleWithdraw(event)">
-          <div class="input-group">
-            <label>Full Name</label>
-            <input type="text" class="input-control" id="withdrawName" placeholder="Enter your full legal name" required>
-          </div>
-
-          <div class="input-group">
-            <label>Payment Method</label>
-            <select class="input-control" id="withdrawMethod" required>
-              <option value="CBE BANK">1. CBE Bank</option>
-              <option value="TELEBIRR">2. Telebirr</option>
-              <option value="M-PESA">3. M-Pesa</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label>Account / Phone Number</label>
-            <input type="text" class="input-control" id="withdrawAccount" placeholder="Enter account or phone number" required>
-          </div>
-
-          <p style="font-size: 11px; color: var(--gold-color); margin-bottom: 12px;">
-            ℹ️ Withdrawal requests are processed securely within 6–12 hours.
-          </p>
-
-          <button id="withdrawBtn" class="btn btn-disabled" disabled>
-            Withdraw 🔐
-          </button>
-        </form>
-      </div>
+      <button class="btn btn-action" style="width:auto; padding:8px 16px;" onclick="doTask('https://t.me/TirBrchannel', 10)">GO</button>
     </div>
-
   </div>
 
-  <!-- NAVIGATION BAR -->
-  <div class="navbar">
-    <div class="nav-item active" onclick="switchTab('homeScreen', this)">
-      <div class="nav-icon">🏠</div>
-      <div>Home</div>
+  <!-- TAB 3: REFERRAL / TEAM -->
+  <div class="tab-view" id="tab-team">
+    <div class="section-title"><i class="fa-solid fa-users"></i> Referral Program</div>
+    <div class="progress-box" style="text-align:center;">
+      <i class="fa-solid fa-user-group" style="font-size:40px; color:var(--accent-color); margin-bottom:10px;"></i>
+      <h3>1 Referral = 10 Ŧir-br</h3>
+      <p style="font-size:12px; color:var(--text-sub); margin:8px 0 16px 0;">Minimum 10 Referrals required to unlock withdrawal.</p>
+      <div style="background:#03140a; padding:10px; border-radius:8px; font-size:12px; word-break:break-all;" id="refLink">
+        https://t.me/Orotask_Bot?start=ref_7658278710
+      </div>
+      <button class="btn btn-action" style="margin-top:12px;" onclick="copyRefLink()"><i class="fa-solid fa-copy"></i> Copy Referral Link</button>
     </div>
-    <div class="nav-item" onclick="switchTab('tasksScreen', this)">
-      <div class="nav-icon">📋</div>
-      <div>Tasks</div>
+  </div>
+
+  <!-- TAB 4: WITHDRAWAL / ASSETS -->
+  <div class="tab-view" id="tab-wallet">
+    <div class="section-title"><i class="fa-solid fa-wallet"></i> My Assets</div>
+    
+    <div class="progress-box">
+      <div style="font-size:12px; color:var(--text-sub);">Total Balance</div>
+      <div style="font-size:28px; font-weight:bold; color:var(--accent-color); margin:5px 0;"><span id="walletTir">0</span> Ŧir-br</div>
+      <div style="font-size:13px; color:#10b981;">≈ <span id="walletEtb">0.00</span> ETB (1 Ŧir-br = 0.3 ETB)</div>
     </div>
-    <div class="nav-item" onclick="switchTab('spinScreen', this)">
-      <div class="nav-icon">🎡</div>
-      <div>Spin</div>
+
+    <div class="section-title" style="margin-top:20px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal Options</div>
+    
+    <div style="background:var(--card-bg); padding:16px; border-radius:12px; border:1px solid #14532d;">
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">Requirements: Minimum <b>5,000 Ŧir-br</b> & <b>10 Referrals</b>.</p>
+      
+      <button class="btn btn-action" style="background:#0055a5;" onclick="processWithdraw('CBE Birr')">CBE Birr</button>
+      <button class="btn btn-action" style="background:#f58220;" onclick="processWithdraw('Telebirr')">Telebirr</button>
+      <button class="btn btn-action" style="background:#408000;" onclick="processWithdraw('M-Pesa')">M-Pesa</button>
     </div>
-    <div class="nav-item" onclick="switchTab('inviteScreen', this)">
-      <div class="nav-icon">👥</div>
-      <div>Invite</div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="nav-bar">
+    <div class="nav-item" onclick="switchTab('tab-team')">
+      <i class="fa-solid fa-users"></i>
+      <span>Team</span>
     </div>
-    <div class="nav-item" onclick="switchTab('profileScreen', this)">
-      <div class="nav-icon">👤</div>
-      <div>Profile</div>
+    <div class="nav-item" onclick="switchTab('tab-earn')">
+      <i class="fa-solid fa-list-check"></i>
+      <span>Earn</span>
+    </div>
+    <div class="nav-item active" onclick="switchTab('tab-spin')">
+      <i class="fa-solid fa-compass-drafting"></i>
+      <span>Spin</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tab-wallet')">
+      <i class="fa-solid fa-wallet"></i>
+      <span>Wallet</span>
     </div>
   </div>
 
   <script>
-    // --- APP CONSTANTS & CONFIGURATION ---
-    const ADSGRAM_BLOCK_ID = "46109";
-    const CHANNEL_LINK = "https://t.me/TirBrchannel";
-    const CONVERSION_RATE = 1500 / 5000; // 5000 Tir-br = 1500 ETB (0.3 ETB per Tir-br)
-    const DAILY_ADS_LIMIT = 50;
+    // State Variables
+    let tirBalance = 0;
+    let gemBalance = 10;
+    let referrals = 0;
+    let hasJoinedChannel = false;
 
-    // --- APPLICATION STATE ---
-    let state = {
-      balance: 0,
-      referrals: 0,
-      hasJoinedChannel: false,
-      channelClicked: false,
-      lastDailyClaim: null,
-      adsWatchedToday: 0,
-      lastAdResetDate: new Date().toDateString(),
-      completedTasks: [],
-      canSpin: true
-    };
-
-    // Initialize Telegram WebApp SDK
+    // Telegram App Setup
     const tg = window.Telegram?.WebApp;
     if (tg) {
-      tg.ready();
       tg.expand();
+      if (tg.initDataUnsafe?.user) {
+        document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name || 'User';
+        document.getElementById('userId').innerText = tg.initDataUnsafe.user.id || '7658278710';
+        document.getElementById('refLink').innerText = `https://t.me/Orotask_Bot?start=ref_${tg.initDataUnsafe.user.id}`;
+      }
     }
 
-    // Adsgram Controller Initialization
+    // Adsgram AdController Setup (Block ID: 46109)
     let AdController = null;
     if (window.Adsgram) {
-      AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+      AdController = window.Adsgram.init({ blockId: "46109" });
     }
 
-    // --- INITIALIZATION ON LOAD ---
-    window.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      initUserData();
-      checkDailyReset();
-      renderTasks();
-      updateUI();
-
-      // Enforce Channel Join Modal
-      if (!state.hasJoinedChannel) {
-        document.getElementById('joinModal').style.display = 'flex';
+    function showAdsgramAd() {
+      if (AdController) {
+        AdController.show().then((result) => {
+          addTir(10);
+          alert("Success! You earned +10 Ŧir-br for watching the ad.");
+        }).catch((result) => {
+          alert("Ad failed to load or was closed early. Please try again.");
+        });
       } else {
-        document.getElementById('joinModal').style.display = 'none';
-      }
-    });
-
-    // --- STATE PERSISTENCE ---
-    function saveState() {
-      localStorage.setItem('tir_br_app_state', JSON.stringify(state));
-    }
-
-    function loadState() {
-      const saved = localStorage.getItem('tir_br_app_state');
-      if (saved) {
-        try {
-          state = { ...state, ...JSON.parse(saved) };
-        } catch (e) {
-          console.error("State loading error", e);
-        }
+        addTir(10);
+        alert("Adsgram Ad (Block ID: 46109): +10 Ŧir-br added.");
       }
     }
 
-    function checkDailyReset() {
-      const today = new Date().toDateString();
-      if (state.lastAdResetDate !== today) {
-        state.adsWatchedToday = 0;
-        state.lastAdResetDate = today;
-        saveState();
-      }
+    // Update UI Balances
+    function updateBalances() {
+      document.getElementById('tirBalance').innerText = tirBalance;
+      document.getElementById('walletTir').innerText = tirBalance;
+      document.getElementById('gemBalance').innerText = gemBalance;
+      document.getElementById('progressTir').innerText = tirBalance;
+      
+      let etbVal = (tirBalance * 0.3).toFixed(2);
+      document.getElementById('walletEtb').innerText = etbVal;
+
+      let pct = Math.min((tirBalance / 5000) * 100, 100);
+      document.getElementById('progressBar').style.width = pct + '%';
     }
 
-    // --- USER TELEGRAM PROFILE INTEGRATION ---
-    function initUserData() {
-      const user = tg?.initDataUnsafe?.user;
-      const userName = user ? `${user.first_name} ${user.last_value || ''}`.trim() : "Tir-Br User";
-      const userId = user?.id ? user.id : Math.floor(100000 + Math.random() * 900000);
-
-      document.getElementById('userNameDisplay').innerText = userName;
-      document.getElementById('userIdDisplay').innerText = `ID: ${userId}`;
-      document.getElementById('userAvatar').innerText = userName.charAt(0).toUpperCase();
-
-      // Set Referral Link
-      const refLink = `https://t.me/Orotask_Bot?start=ref_${userId}`;
-      document.getElementById('refLinkDisplay').innerText = refLink;
+    function addTir(amount) {
+      tirBalance += amount;
+      updateBalances();
     }
 
-    // --- FORCED CHANNEL JOIN LOGIC ---
-    function markChannelClicked() {
-      state.channelClicked = true;
-      saveState();
+    // Modal Control
+    function joinChannel() {
+      window.open('https://t.me/TirBrchannel', '_blank');
     }
 
-    function verifyChannelJoin() {
-      if (!state.channelClicked) {
-        alert("Please click 'Join Channel Now' and join the official channel first!");
-        return;
-      }
-      state.hasJoinedChannel = true;
-      saveState();
+    function verifyJoin() {
+      hasJoinedChannel = true;
       document.getElementById('joinModal').style.display = 'none';
-      confetti({ particleCount: 50, spread: 60 });
+      addTir(5);
     }
 
-    // --- UI UPDATER ---
-    function updateUI() {
-      const birrEquivalent = (state.balance * CONVERSION_RATE).toFixed(2);
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       
-      document.getElementById('balanceDisplay').innerText = `${state.balance.toLocaleString()} Tir-br`;
-      document.getElementById('birrDisplay').innerText = `≈ ${birrEquivalent} ETB`;
-      document.getElementById('adCounter').innerText = `${state.adsWatchedToday} / ${DAILY_ADS_LIMIT} Today`;
-      document.getElementById('refCountDisplay').innerText = `${state.referrals} / 10 Friends Joined`;
-
-      // Check Withdrawal Button Conditions (5000 Tir-br AND 10 Referrals required)
-      const withdrawBtn = document.getElementById('withdrawBtn');
-      const canWithdraw = state.balance >= 5000 && state.referrals >= 10;
-
-      if (canWithdraw) {
-        withdrawBtn.disabled = false;
-        withdrawBtn.className = "btn btn-primary";
-        withdrawBtn.innerText = "Withdraw Funds Now";
-      } else {
-        withdrawBtn.disabled = true;
-        withdrawBtn.className = "btn btn-disabled";
-        withdrawBtn.innerText = "Withdraw 🔐";
-      }
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
     }
 
-    // --- TAB SWITCHING ---
-    function switchTab(screenId, element) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      
-      document.getElementById(screenId).classList.add('active');
-      element.classList.add('active');
-    }
-
-    // --- WATCH ADSGRAM VIDEO ADS ---
-    function watchAdsgramAd() {
-      checkDailyReset();
-
-      if (state.adsWatchedToday >= DAILY_ADS_LIMIT) {
-        alert("Daily ad limit reached (50/50). Please come back tomorrow!");
-        return;
-      }
-
-      if (!AdController) {
-        alert("Adsgram SDK is initializing. Please try again in a few seconds.");
-        return;
-      }
-
-      // Trigger Adsgram Reward Video
-      AdController.show().then((result) => {
-        // Successful ad watch (30 seconds completed)
-        state.balance += 5;
-        state.adsWatchedToday += 1;
-        saveState();
-        updateUI();
-        confetti({ particleCount: 40, spread: 50 });
-        alert("Success! You earned +5 Tir-br.");
-      }).catch((error) => {
-        console.log("Ad cancelled or failed:", error);
-        alert("Ad was not completed. Watch the full ad to earn rewards.");
-      });
-    }
-
-    // --- DAILY CLAIM ---
-    function claimDailyReward() {
-      const now = new Date().getTime();
-      const oneDay = 24 * 60 * 60 * 1000;
-
-      if (state.lastDailyClaim && (now - state.lastDailyClaim) < oneDay) {
-        const hoursLeft = Math.ceil((oneDay - (now - state.lastDailyClaim)) / (1000 * 60 * 60));
-        alert(`You have already claimed today's reward! Next claim available in ${hoursLeft} hours.`);
-        return;
-      }
-
-      state.balance += 5;
-      state.lastDailyClaim = now;
-      saveState();
-      updateUI();
-      confetti({ particleCount: 60, spread: 70 });
-      alert("Congratulations! You claimed your daily 5 Tir-br reward.");
-    }
-
-    // --- SPIN WHEEL LOGIC ---
+    // Spin Wheel Action
     function spinWheel() {
-      if (!state.canSpin) {
-        alert("Spin limit reached for today. Try again tomorrow!");
+      if (tirBalance < 10) {
+        alert("Minimum 10 Ŧir-br required to spin!");
         return;
       }
+      tirBalance -= 10;
+      updateBalances();
 
-      const wheel = document.getElementById('wheel');
-      const randomDegree = 1800 + Math.floor(Math.random() * 360); // Minimum 5 full rotations
-      wheel.style.transform = `rotate(${randomDegree}deg)`;
-      
-      const spinBtn = document.getElementById('spinBtn');
-      spinBtn.disabled = true;
+      let wheel = document.getElementById('wheelImg');
+      let deg = 1800 + Math.floor(Math.random() * 360);
+      wheel.style.transform = `rotate(${deg}deg)`;
 
       setTimeout(() => {
-        const prizes = [5, 10, 15, 20, 25, 50];
-        const won = prizes[Math.floor(Math.random() * prizes.length)];
-        
-        state.balance += won;
-        state.canSpin = false;
-        saveState();
-        updateUI();
-
-        confetti({ particleCount: 80, spread: 80 });
-        alert(`🎉 Congratulations! You won ${won} Tir-br from the Lucky Wheel!`);
-        spinBtn.disabled = false;
-      }, 4000);
+        let win = Math.floor(Math.random() * 50) + 5;
+        addTir(win);
+        alert(`Congratulations! You won +${win} Ŧir-br!`);
+      }, 3200);
     }
 
-    // --- DYNAMIC TASKS SYSTEM ---
-    const mockTasks = [
-      { id: 1, title: "Join Crypto News Channel", reward: 15, link: "https://t.me/TirBrchannel" },
-      { id: 2, title: "Follow Community Telegram", reward: 10, link: "https://t.me/TirBrchannel" },
-      { id: 3, title: "Subscribe Sponsor Partner", reward: 20, link: "https://t.me/TirBrchannel" },
-      { id: 4, title: "Check Special Promo Task", reward: 25, link: "https://t.me/TirBrchannel" }
-    ];
-
-    function renderTasks() {
-      const taskContainer = document.getElementById('taskList');
-      taskContainer.innerHTML = "";
-
-      mockTasks.forEach(task => {
-        const isDone = state.completedTasks.includes(task.id);
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'task-item';
-        taskDiv.innerHTML = `
-          <div class="task-info">
-            <h4>${task.title}</h4>
-            <p>+${task.reward} Tir-br</p>
-          </div>
-          <button class="btn ${isDone ? 'btn-disabled' : 'btn-accent'} task-btn" 
-                  onclick="completeTask(${task.id}, ${task.reward}, '${task.link}')" 
-                  ${isDone ? 'disabled' : ''}>
-            ${isDone ? 'Completed ✅' : 'Start Task'}
-          </button>
-        `;
-        taskContainer.appendChild(taskDiv);
-      });
-    }
-
-    function completeTask(id, reward, link) {
+    // Do Task Action
+    function doTask(link, reward) {
       window.open(link, '_blank');
       setTimeout(() => {
-        if (!state.completedTasks.includes(id)) {
-          state.completedTasks.push(id);
-          state.balance += reward;
-          saveState();
-          updateUI();
-          renderTasks();
-          alert(`Task completed! +${reward} Tir-br added to your balance.`);
-        }
-      }, 3000);
+        addTir(reward);
+        alert(`Task completed! +${reward} Ŧir-br added.`);
+      }, 2000);
     }
 
-    // --- REFERRAL LINK COPY ---
-    function copyReferralLink() {
-      const linkText = document.getElementById('refLinkDisplay').innerText;
-      navigator.clipboard.writeText(linkText).then(() => {
-        alert("Referral link copied to clipboard!");
-      }).catch(() => {
-        alert("Failed to copy link. Please copy manually.");
-      });
+    // Copy Referral Link
+    function copyRefLink() {
+      let linkText = document.getElementById('refLink').innerText;
+      navigator.clipboard.writeText(linkText);
+      alert("Referral link copied to clipboard!");
     }
 
-    // --- WITHDRAWAL FORM HANDLER ---
-    function handleWithdraw(e) {
-      e.preventDefault();
-
-      const name = document.getElementById('withdrawName').value;
-      const method = document.getElementById('withdrawMethod').value;
-      const account = document.getElementById('withdrawAccount').value;
-
-      if (state.balance < 5000 || state.referrals < 10) {
-        alert("Requirements not met! You need 5,000 Tir-br and 10 active referrals.");
+    // Process Withdrawal
+    function processWithdraw(method) {
+      if (tirBalance < 5000) {
+        alert(`Minimum withdrawal threshold is 5,000 Ŧir-br. Your balance: ${tirBalance} Ŧir-br`);
         return;
       }
-
-      alert(`Withdrawal Request Submitted Successfully!\n\nName: ${name}\nMethod: ${method}\nAccount: ${account}\nAmount: ${state.balance} Tir-br\n\nStatus: Processing (Estimated 6–12 Hours).`);
-
-      // Deduct balance and update state
-      state.balance = 0;
-      saveState();
-      updateUI();
-      document.getElementById('withdrawForm').reset();
+      if (referrals < 10) {
+        alert(`Minimum 10 referrals required. Current: ${referrals}/10`);
+        return;
+      }
+      alert(`Enter your ${method} details to process withdrawal!`);
     }
+
+    // Initial Trigger
+    updateBalances();
   </script>
 </body>
 </html>
